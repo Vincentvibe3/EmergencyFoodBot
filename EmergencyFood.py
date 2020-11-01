@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import typing
-import asyncio
 
 #command modules
 import Sauce_finder as sf

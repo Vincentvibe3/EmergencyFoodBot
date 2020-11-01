@@ -1,5 +1,4 @@
 import aiohttp
-import asyncio
 
 async def randomUrl(tags):
     tags = tags.split()
