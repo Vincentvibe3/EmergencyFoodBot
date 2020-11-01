@@ -1,53 +1,38 @@
 import discord
+from discord.ext import commands
+import typing
 import requests
-#import discordbot_commands
+import asyncio
+
+#command modules
+import Sauce_finder as sf
+
+#import token
 tokenSource = open('.token.txt', 'r') 
-client = discord.Client()
 TOKEN = tokenSource.read()
+#command prefix
 commandPrefix = '$'
+bot = commands.Bot(command_prefix="$")
 description = '''$'''
 
-@client.event
+#ready message
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-    await client.change_presence(activity= discord.Game("Kevin is horny"))
+    print('Logged in as {0.user}'.format(bot))
+    await bot.change_presence(activity= discord.Game("Kevin is horny"))
 
-@client.event
-async def on_message(message):
-    commandName = 'say'
-    if message.author == client.user:
-        return
+#commands
+@bot.command()
+async def say(ctx, *, arg):
+    await ctx.send(arg)
 
-    if message.content.startswith(str(commandPrefix+commandName)):
-        userMessage = message.content[len(commandPrefix+commandName):]
-        await message.channel.send(userMessage)
+@bot.command()
+async def sauce(ctx, *, tags: typing.Optional[str] = ''):
+    if ctx.channel.is_nsfw():
+        sauceUrl = await sf.randomUrl(tags)
+        await ctx.send(sauceUrl)    
+    
+    else: 
+        await ctx.send("This command can only be used in NSFW channels")
 
-@client.event
-async def on_message(message):
-    commandName = 'spam'
-    if message.author == client.user:
-        return
-
-    if message.content.startswith(str(commandPrefix+commandName)):
-        while True:
-            userMessage = message.content[len(commandPrefix+commandName):]
-            await message.channel.send(userMessage)
-
-@client.event 
-async def on_message(message):
-    commandName = 'sauce'
-    if message.author == client.user:
-        return
-
-    if message.content.startswith(str(commandPrefix+commandName)):
-        if message.channel.is_nsfw():
-            isEnglish = -1
-            while isEnglish == -1:
-                randomSauce = requests.head('https://nhentai.net/random', allow_redirects=True)
-                siteContent = requests.get(randomSauce.url, allow_redirects=True).text
-                isEnglish = siteContent.find('/language/english')
-            await message.channel.send(randomSauce.url)
-        else: 
-            await message.channel.send("This command can only be used in NSFW channels")
-
-client.run(TOKEN)
+bot.run(TOKEN)
