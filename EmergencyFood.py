@@ -1,5 +1,4 @@
 import discord
-import random
 import requests
 #import discordbot_commands
 tokenSource = open('.token.txt', 'r') 
