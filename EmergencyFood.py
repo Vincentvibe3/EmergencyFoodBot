@@ -2,9 +2,9 @@ import discord
 import random
 import requests
 #import discordbot_commands
-
+tokenSource = open('.token.txt', 'r') 
 client = discord.Client()
-TOKEN ='NzcyMjU2MzAwMzg5MjM2NzY3.X54BuQ.XCiux6yOfhNowA247YvAWmWwHbE'
+TOKEN = tokenSource.read()
 commandPrefix = '$'
 description = '''$'''
 
@@ -51,4 +51,4 @@ async def on_message(message):
         else: 
             await message.channel.send("This command can only be used in NSFW channels")
 
-client.run('NzcyMjU2MzAwMzg5MjM2NzY3.X54BuQ.XCiux6yOfhNowA247YvAWmWwHbE')
+client.run(TOKEN)
