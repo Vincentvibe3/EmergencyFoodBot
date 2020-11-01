@@ -1,12 +1,13 @@
 import discord
 from discord.ext import commands
 import typing
+import os
 
 #command modules
 import Sauce_finder as sf
 
 #import token
-tokenSource = open('.token.txt', 'r') 
+tokenSource = os.environ['TOKEN']
 TOKEN = tokenSource.read()
 #command prefix
 commandPrefix = '$'
