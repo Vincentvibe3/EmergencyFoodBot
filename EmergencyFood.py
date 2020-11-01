@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import typing
-import requests
 import asyncio
 
 #command modules
