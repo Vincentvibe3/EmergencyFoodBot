@@ -8,7 +8,7 @@ import Sauce_finder as sf
 
 #import token
 tokenSource = os.environ['TOKEN']
-TOKEN = tokenSource.read()
+TOKEN = tokenSource
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
