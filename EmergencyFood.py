@@ -33,4 +33,5 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
     else: 
         await ctx.send("This command can only be used in NSFW channels")
 
+input()
 bot.run(TOKEN)
