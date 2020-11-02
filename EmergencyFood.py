@@ -1,13 +1,13 @@
 import discord
 from discord.ext import commands
 import typing
+import os
 
 #command modules
 import Sauce_finder as sf
 
 #import token
-tokenSource = open('.token.txt', 'r') 
-TOKEN = tokenSource.read()
+TOKEN = os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
@@ -33,5 +33,4 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
     else: 
         await ctx.send("This command can only be used in NSFW channels")
 
-input()
 bot.run(TOKEN)
