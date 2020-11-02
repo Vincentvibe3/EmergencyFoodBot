@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands
+import random
 import typing
 import os
+import asyncio
 
 #command modules
 import Sauce_finder as sf
@@ -17,7 +19,7 @@ description = '''$'''
 @bot.event
 async def on_ready():
     print('Logged in as {0.user}'.format(bot))
-    await bot.change_presence(activity= discord.Game("Kevin is horny"))
+    await bot.change_presence(activity= discord.Game('Kevin is horny'))
 
 #commands
 @bot.command()
@@ -31,6 +33,13 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
         await ctx.send(sauceUrl)    
     
     else: 
-        await ctx.send("This command can only be used in NSFW channels")
+        await ctx.send('This command can only be used in NSFW channels')
+
+async def sauce_indexing():
+    for i in range (0, 100):
+        sauceIndex = open('sauce_index.txt', 'a')
+        sauceIndex.write(str(random.randint(0, 999999))+'\n')
+
+asyncio.run(sauce_indexing())
 
 bot.run(TOKEN)
