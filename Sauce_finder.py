@@ -12,7 +12,7 @@ async def randomUrl(tags):
         return site.url
     
     else:
-        return 'stop being horny and just use a random sauce'
+        return 'stop being horny and just use a random sauce *bonk*'
         tagsCheck = []
         while isEnglish == -1 or '0' in tagsCheck:
             tagsCheck =[]
