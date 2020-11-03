@@ -35,11 +35,4 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
     else: 
         await ctx.send('This command can only be used in NSFW channels')
 
-async def sauce_indexing():
-    for i in range (0, 100):
-        sauceIndex = open('sauce_index.txt', 'a')
-        sauceIndex.write(str(random.randint(0, 999999))+'\n')
-
-asyncio.run(sauce_indexing())
-
 bot.run(TOKEN)
