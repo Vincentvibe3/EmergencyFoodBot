@@ -11,7 +11,7 @@ import Sauce_reader as sr
 import reaction_button_check as rbc
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = 'NzcyMjUxNjgwMTAzNDY0OTcw.X539bA.vVQscy8yAK0NTkKzZbEEqEB3-dk'#os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
@@ -34,7 +34,7 @@ async def say(ctx, *, arg):
 @bot.command()
 async def sauce(ctx, *, tags: typing.Optional[str] = ''):
     noRestriction = True
-    if ctx.guild == 564984611822764043:
+    if ctx.guild.name == "The Squad":
         authorRoles = []
         for role in ctx.author.roles:
             authorRoles.append(role.name)
