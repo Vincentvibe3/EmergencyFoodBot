@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
+bot = commands.Bot(command_prefix="$")
 
-async def checkReactions(ctx, tempMessage, currentnumber, max):
+async def checkReactions(ctx, tempMessage, currentnumber, max, owner):
     emojis = ['⏮️', '◀️', '▶️', '⏭️']
     for emoji in emojis:
         await tempMessage.add_reaction(emoji=emoji)
@@ -10,7 +11,7 @@ async def checkReactions(ctx, tempMessage, currentnumber, max):
     while True:
         messageReactions = message.reactions
         for r in messageReactions:
-            if ctx.author in await r.users().flatten():
+            if ctx.author in await r.users().flatten() or owner in await r.users().flatten():
                 if r == messageReactions[0]:
                     await r.remove(ctx.author)
                     return 1

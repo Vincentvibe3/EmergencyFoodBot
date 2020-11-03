@@ -11,7 +11,7 @@ import Sauce_reader as sr
 import reaction_button_check as rbc
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = 'NzcyMjUxNjgwMTAzNDY0OTcw.X539bA.TSGPt9mdVag88BGNeWuI_I1jeE0'#os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
@@ -43,13 +43,14 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
 @bot.command()
 async def readsauce(ctx, number):
     if ctx.channel.is_nsfw():
+        owner = bot.get_user(321812737812594688)
         pagenumbers = int(await sr.pagenumbers(number))
         galleryUrl = await sr.galleryUrl(number)
         i = 1
         image = await sr.checkpage(galleryUrl, i)
         tempMessage = await ctx.send(image)
         while i <= pagenumbers:
-            i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers)
+            i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner)
             newImage = await sr.checkpage(galleryUrl, i)
             await tempMessage.edit(content=newImage)
     
