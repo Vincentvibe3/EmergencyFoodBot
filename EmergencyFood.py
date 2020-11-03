@@ -41,7 +41,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
         await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command()
-async def readsauce2(ctx, number):
+async def readsauce(ctx, number):
     if ctx.channel.is_nsfw():
         pagenumbers = int(await sr.pagenumbers(number))
         galleryUrl = await sr.galleryUrl(number)
