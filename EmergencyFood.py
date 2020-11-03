@@ -21,6 +21,9 @@ description = '''$'''
 async def on_ready():
     print('Logged in as {0.user}'.format(bot))
     await bot.change_presence(activity= discord.Game('Kevin is horny'))
+    print('\nAdded in following servers:')
+    for guilds in bot.guilds:
+        print(" -"+str(guilds))
 
 #commands
 @bot.command()
