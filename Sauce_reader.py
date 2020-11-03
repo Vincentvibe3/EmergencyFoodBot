@@ -1,5 +1,6 @@
 import aiohttp
 from html.parser import HTMLParser
+import asyncio
 
 class HTMLParser1(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -23,23 +24,13 @@ async def pagenumbers(number):
                     HTMLParser1().feed(siteContent)
                     start = currenttag.find('/g/%s/'%(number))
                     end = currenttag.find('/"')
-        return currenttag[9+len('/g/%s/'%(number)):end]
-    
-    # else:
-    #     return 'stop being horny and just use a random sauce *bonk*'
-    #     tagsCheck = []
-    #     while isEnglish == -1 or '0' in tagsCheck:
-    #         tagsCheck =[]
-    #         async with aiohttp.ClientSession() as session:
-    #             async with session.get('https://nhentai.net/random', allow_redirects=True) as site:
-    #                 siteContent = await site.text()
-    #                 isEnglish = siteContent.find('/language/english')
-    #                 print(site.url)
-    #         for tag in range(0, len(tags)):
-    #             if siteContent.find(tags[tag]) == -1:
-    #                 tagsCheck.append('0')
-    #                 break
-    #             else:
-    #                 continue
+        return currenttag[start+len('/g/%s/'%(number)):end]
 
-    #     return site.url
+async def checkpage(url, i):
+    async with aiohttp.ClientSession() as session:
+        async with session.head(url+str(i)+'.jpg', allow_redirects=True) as site:
+            if int(site.status) != 404:
+                return str(url+str(i)+'.jpg')
+            else:
+                return str(url+str(i)+'.png')
+

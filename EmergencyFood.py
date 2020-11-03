@@ -42,8 +42,8 @@ async def readsauce(ctx, number):
         pagenumbers = await sr.pagenumbers(number)
         galleryUrl = await sr.galleryUrl(number)
         for i in range(1, int(pagenumbers)+1):
-            await ctx.send(galleryUrl+str(i)+'.jpg')
-            await ctx.send('page '+str(i))      
+            image = await sr.checkpage(galleryUrl, i)
+            await ctx.send(image)
     
     else: 
         await ctx.send('This command can only be used in NSFW channels')
