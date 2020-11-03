@@ -54,7 +54,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
 @bot.command()
 async def readsauce(ctx, number):
     noRestriction = True
-    if ctx.guild == 564984611822764043:
+    if ctx.guild.name == "The Squad":
         authorRoles = []
         for role in ctx.author.roles:
             authorRoles.append(role.name)
