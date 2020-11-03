@@ -14,13 +14,17 @@ async def checkReactions(ctx, tempMessage, currentnumber, max, owner):
             if ctx.author in await r.users().flatten() or owner in await r.users().flatten():
                 if r == messageReactions[0]:
                     await r.remove(ctx.author)
+                    await r.remove(owner)
                     return 1
                 if r == messageReactions[1]:
                     await r.remove(ctx.author)
+                    await r.remove(owner)
                     return currentnumber-1
                 if r == messageReactions[2]:
                     await r.remove(ctx.author)
+                    await r.remove(owner)
                     return currentnumber+1
                 if r == messageReactions[3]:
                     await r.remove(ctx.author)
+                    await r.remove(owner)
                     return max
