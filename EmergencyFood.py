@@ -8,9 +8,10 @@ import asyncio
 #command modules
 import Sauce_finder as sf
 import Sauce_reader as sr
+import reaction_button_check as rbc
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = 'NzcyMjUxNjgwMTAzNDY0OTcw.X539bA.57k94oXrtKCXJlJSmIl0yOUaGr4'#os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
@@ -40,16 +41,17 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
         await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command()
-async def readsauce(ctx, number):
+async def readsauce2(ctx, number):
     if ctx.channel.is_nsfw():
-        pagenumbers = await sr.pagenumbers(number)
+        pagenumbers = int(await sr.pagenumbers(number))
         galleryUrl = await sr.galleryUrl(number)
-        if int(pagenumbers) <= 50:
-            for i in range(1, int(pagenumbers)+1):
-                image = await sr.checkpage(galleryUrl, i)
-                await ctx.send(image)
-        else:
-            await ctx.send('Please send sauce under 50 pages')
+        i = 1
+        image = await sr.checkpage(galleryUrl, i)
+        tempMessage = await ctx.send(image)
+        while i <= pagenumbers:
+            i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers)
+            newImage = await sr.checkpage(galleryUrl, i)
+            await tempMessage.edit(content=newImage)
     
     else: 
         await ctx.send('This command can only be used in NSFW channels')
