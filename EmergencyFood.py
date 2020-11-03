@@ -33,12 +33,17 @@ async def say(ctx, *, arg):
 
 @bot.command()
 async def sauce(ctx, *, tags: typing.Optional[str] = ''):
-    authorRoles = []
-    for role in ctx.author.roles:
-        authorRoles.append(role.name)
-    if 'Sauce for you' not in authorRoles:
-       await ctx.send('This role cannot use sauce commands')
-    else:
+    noRestriction = True
+    if ctx.guild == 564984611822764043:
+        authorRoles = []
+        for role in ctx.author.roles:
+            authorRoles.append(role.name)
+        if 'Sauce for you' not in authorRoles:
+            noRestriction = False
+            await ctx.send('This role cannot use sauce commands')
+        else:
+            noRestriction = True
+    if noRestriction == True:
         if ctx.channel.is_nsfw():
             sauceUrl = await sf.randomUrl(tags)
             await ctx.send(sauceUrl)    
@@ -48,12 +53,17 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
 
 @bot.command()
 async def readsauce(ctx, number):
-    authorRoles = []
-    for role in ctx.author.roles:
-        authorRoles.append(role.name)
-    if 'Sauce for you' not in authorRoles:
-       await ctx.send('This role cannot use sauce commands')
-    else:
+    noRestriction = True
+    if ctx.guild == 564984611822764043:
+        authorRoles = []
+        for role in ctx.author.roles:
+            authorRoles.append(role.name)
+        if 'Sauce for you' not in authorRoles:
+            noRestriction = False
+            await ctx.send('This role cannot use sauce commands')
+        else:
+            noRestriction = True
+    if noRestriction == True:
         if ctx.channel.is_nsfw():
             owner = bot.get_user(321812737812594688)
             pagenumbers = int(await sr.pagenumbers(number))
