@@ -41,9 +41,12 @@ async def readsauce(ctx, number):
     if ctx.channel.is_nsfw():
         pagenumbers = await sr.pagenumbers(number)
         galleryUrl = await sr.galleryUrl(number)
-        for i in range(1, int(pagenumbers)+1):
-            image = await sr.checkpage(galleryUrl, i)
-            await ctx.send(image)
+        if int(pagenumbers) <= 50:
+            for i in range(1, int(pagenumbers)+1):
+                image = await sr.checkpage(galleryUrl, i)
+                await ctx.send(image)
+        else:
+            await ctx.send('Please send sauce under 50 pages')
     
     else: 
         await ctx.send('This command can only be used in NSFW channels')
