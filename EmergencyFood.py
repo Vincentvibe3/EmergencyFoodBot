@@ -11,7 +11,7 @@ import Sauce_reader as sr
 import reaction_button_check as rbc
 
 #import token
-TOKEN = 'NzcyMjUxNjgwMTAzNDY0OTcw.X539bA.TSGPt9mdVag88BGNeWuI_I1jeE0'#os.environ['TOKEN']
+TOKEN = os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
