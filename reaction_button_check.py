@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-bot = commands.Bot(command_prefix="$")
+import time
 
-async def checkReactions(ctx, tempMessage, currentnumber, max, owner):
+async def checkReactions(ctx, tempMessage, currentnumber, max, owner, timeout):
     emojis = ['⏮️', '◀️', '▶️', '⏭️']
     for emoji in emojis:
         await tempMessage.add_reaction(emoji=emoji)
@@ -11,7 +11,9 @@ async def checkReactions(ctx, tempMessage, currentnumber, max, owner):
     while True:
         messageReactions = message.reactions
         for r in messageReactions:
-            if ctx.author in await r.users().flatten() or owner in await r.users().flatten():
+            if time.time() >= timeout:
+                    return currentnumber
+            elif ctx.author in await r.users().flatten() or owner in await r.users().flatten():
                 if r == messageReactions[0]:
                     await r.remove(ctx.author)
                     await r.remove(owner)

@@ -12,10 +12,10 @@ import Sauce_reader as sr
 import reaction_button_check as rbc
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
 commandPrefix = '$'
-bot = commands.Bot(command_prefix="$")
+bot = commands.Bot(command_prefix="2")
 description = '''$'''
 
 #ready message
@@ -72,13 +72,11 @@ async def readsauce(ctx, number):
             i = 1
             image = await sr.checkpage(galleryUrl, i)
             tempMessage = await ctx.send(image)
-            stoptime = time.time()+10*60
+            stoptime = time.time()+10
             while time.time() < stoptime:
-                i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner)
+                i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
                 newImage = await sr.checkpage(galleryUrl, i)
                 await tempMessage.edit(content=newImage)
-            await owner.send("timeout")
-            print('timeout reached')
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
