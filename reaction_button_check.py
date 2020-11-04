@@ -19,11 +19,17 @@ async def checkReactions(ctx, tempMessage, currentnumber, max, owner):
                 if r == messageReactions[1]:
                     await r.remove(ctx.author)
                     await r.remove(owner)
-                    return currentnumber-1
+                    if currentnumber > 1:
+                        return currentnumber-1
+                    else: 
+                        return currentnumber
                 if r == messageReactions[2]:
                     await r.remove(ctx.author)
                     await r.remove(owner)
-                    return currentnumber+1
+                    if currentnumber < max:
+                        return currentnumber+1
+                    else:
+                        return currentnumber
                 if r == messageReactions[3]:
                     await r.remove(ctx.author)
                     await r.remove(owner)

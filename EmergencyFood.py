@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import random
 import typing
+import time
 import os
 import asyncio
 
@@ -11,7 +12,7 @@ import Sauce_reader as sr
 import reaction_button_check as rbc
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
@@ -52,7 +53,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
             await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command()
-async def readsauce(ctx, number):
+async def readsauce2(ctx, number):
     noRestriction = True
     if ctx.guild.name == "The Squad":
         authorRoles = []
@@ -71,10 +72,12 @@ async def readsauce(ctx, number):
             i = 1
             image = await sr.checkpage(galleryUrl, i)
             tempMessage = await ctx.send(image)
-            while i =< pagenumbers and i => 0:
+            stoptime = time.time()+10*60
+            while time.time() < stoptime:
                 i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner)
                 newImage = await sr.checkpage(galleryUrl, i)
                 await tempMessage.edit(content=newImage)
+            print('timeout reached')
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
