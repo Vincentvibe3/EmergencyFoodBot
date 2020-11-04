@@ -77,6 +77,7 @@ async def readsauce(ctx, number):
                 i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner)
                 newImage = await sr.checkpage(galleryUrl, i)
                 await tempMessage.edit(content=newImage)
+            await owner.send("timeout")
             print('timeout reached')
         
         else: 
