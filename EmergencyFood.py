@@ -72,7 +72,7 @@ async def readsauce(ctx, number):
             i = 1
             image = await sr.checkpage(galleryUrl, i)
             tempMessage = await ctx.send(image)
-            stoptime = time.time()+10
+            stoptime = time.time()+10*60
             while time.time() < stoptime:
                 i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
                 newImage = await sr.checkpage(galleryUrl, i)
