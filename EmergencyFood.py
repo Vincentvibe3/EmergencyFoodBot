@@ -12,7 +12,7 @@ import Sauce_reader as sr
 import reaction_button_check as rbc
 
 #import token
-TOKEN = os.environ['TOKENBETA']
+TOKEN = os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix="$")
@@ -53,7 +53,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
             await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command()
-async def readsauce2(ctx, number):
+async def readsauce(ctx, number):
     noRestriction = True
     if ctx.guild.name == "The Squad":
         authorRoles = []
