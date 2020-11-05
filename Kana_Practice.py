@@ -29,7 +29,7 @@ async def getQuestion(mode):
     
     if kana[soundCategory] == nSound:
         question = '\nWhat is the sound of this kana?(ex: for あ type "a")'
-        questionContent = questionCat[toRemove]
+        questionContent = questionCat[toRemove]+question
     
     else:
         question = '\nWhat is the sound of the missing kana?(ex: for あ type "a")'
