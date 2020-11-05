@@ -88,8 +88,9 @@ async def practicekana(ctx, mode=''):
         questionContent, answer = await kp.getQuestion(mode)
         await ctx.send(questionContent)
         try:
+            timeout = time.time()+7
             while True:
-                userAnswer = await bot.wait_for('message', timeout=7)
+                userAnswer = await bot.wait_for('message', timeout=timeout-time.time())
                 if userAnswer.author == ctx.author:
                     break
                 else:
