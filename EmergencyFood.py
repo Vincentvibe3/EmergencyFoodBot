@@ -10,12 +10,13 @@ import asyncio
 import Sauce_finder as sf
 import Sauce_reader as sr
 import reaction_button_check as rbc
+import Kana_Practice as kp
 
 #import token
 TOKEN = os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
-bot = commands.Bot(command_prefix="$")
+bot = commands.Bot(command_prefix=commandPrefix)
 description = '''$'''
 
 #ready message
@@ -80,5 +81,31 @@ async def readsauce(ctx, number):
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
+
+@bot.command()
+async def practicekana(ctx, mode=''):
+    if mode.lower() in ['hiragana', 'katakana']:
+        questionContent, answer = await kp.getQuestion(mode)
+        await ctx.send(questionContent)
+        try:
+            while True:
+                userAnswer = await bot.wait_for('message', timeout=7)
+                if userAnswer.author == ctx.author:
+                    break
+                else:
+                    continue
+                
+            if userAnswer.content == answer:
+                await ctx.send('Your answer is correct')
+            else:
+                await ctx.send('The correct answer was ' + answer)
+
+        except:
+            await ctx.send('Too slow. The answer was "' + answer +'"')
+    elif mode == '':    
+        await ctx.send('You must specify a mode(hiragana or katakana)') 
+    else:
+        await ctx.send('Please enter a valid mode(hiragana or katakana)')
+
 
 bot.run(TOKEN)
