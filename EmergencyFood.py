@@ -82,7 +82,7 @@ async def readsauce(ctx, number):
         else: 
             await ctx.send('This command can only be used in NSFW channels')
 
-@bot.command()
+@bot.command(aliases = ['pk'])
 async def practicekana(ctx, mode=''):
     if mode.lower() in ['hiragana', 'katakana']:
         questionContent, answer = await kp.getQuestion(mode)
