@@ -1,0 +1,6 @@
+.token.txt
+.vscode/
+__pycache__/
+Testbot.py
+TOKEN.txt
+TOKENBETA.txt
