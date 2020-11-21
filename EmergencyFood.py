@@ -80,10 +80,9 @@ async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
             while time.time() < stoptime:
                 i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
                 newImage = await sr.checkpage(galleryUrl, i)
-                newEmbed = discord.Embed(footer="Page " + str(i))
-                newEmbed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
-                newEmbed.set_image(url=newImage)
-                await tempMessage.edit(embed = newEmbed)
+                embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
+                embed.set_image(url=newImage)
+                await tempMessage.edit(embed = embed)
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
