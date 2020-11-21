@@ -69,20 +69,23 @@ async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
         if ctx.channel.is_nsfw():
             owner = bot.get_user(321812737812594688)
             pagenumbers = int(await sr.pagenumbers(number))
-            galleryUrl = await sr.galleryUrl(number)
-            i = page
-            image = await sr.checkpage(galleryUrl, i)
-            embed = discord.Embed()
-            embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
-            embed.set_image(url=image)
-            tempMessage = await ctx.send(embed=embed)
-            stoptime = time.time()+10*60
-            while time.time() < stoptime:
-                i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
-                newImage = await sr.checkpage(galleryUrl, i)
+            if page > pagenumbers or page < 1:
+                await ctx.send('This page does not exist')
+            else:
+                galleryUrl = await sr.galleryUrl(number)
+                i = page
+                image = await sr.checkpage(galleryUrl, i)
+                embed = discord.Embed()
                 embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
-                embed.set_image(url=newImage)
-                await tempMessage.edit(embed = embed)
+                embed.set_image(url=image)
+                tempMessage = await ctx.send(embed=embed)
+                stoptime = time.time()+10*60
+                while time.time() < stoptime:
+                    i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
+                    newImage = await sr.checkpage(galleryUrl, i)
+                    embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
+                    embed.set_image(url=newImage)
+                    await tempMessage.edit(embed = embed)
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
