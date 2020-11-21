@@ -2,7 +2,7 @@ import aiohttp
 from html.parser import HTMLParser
 import asyncio
 
-class HTMLParser1(HTMLParser):
+class PARSEPAGE(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if str(tag) == "a":
             if ('class', 'last') in attrs:
@@ -21,7 +21,7 @@ async def pagenumbers(number):
         async with aiohttp.ClientSession() as session:
             async with session.get('https://nhentai.net/g/%s/1/' %(number), allow_redirects=True) as site:
                     siteContent = await site.text()
-                    HTMLParser1().feed(siteContent)
+                    PARSEPAGE().feed(siteContent)
                     start = currenttag.find('/g/%s/'%(number))
                     end = currenttag.find('/"')
         return currenttag[start+len('/g/%s/'%(number)):end]
