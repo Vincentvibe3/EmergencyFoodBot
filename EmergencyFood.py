@@ -73,7 +73,7 @@ async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
             i = page
             image = await sr.checkpage(galleryUrl, i)
             embed = discord.Embed()
-            embed.set_footer(text="Page " + str(i))
+            embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
             embed.set_image(url=image)
             tempMessage = await ctx.send(embed=embed)
             stoptime = time.time()+10*60
@@ -81,7 +81,7 @@ async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
                 i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
                 newImage = await sr.checkpage(galleryUrl, i)
                 newEmbed = discord.Embed(footer="Page " + str(i))
-                newEmbed.set_footer(text="Page " + str(i))
+                newEmbed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
                 newEmbed.set_image(url=newImage)
                 await tempMessage.edit(embed = newEmbed)
         
