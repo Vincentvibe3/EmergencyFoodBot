@@ -69,11 +69,10 @@ async def readsauce(ctx, number, *, i: typing.Optional[int]=1):
         if ctx.channel.is_nsfw():
             owner = bot.get_user(321812737812594688)
             pagenumbers = int(await sr.pagenumbers(number))
-            if i in range(1, pagenumbers+1):
+            if i > pagenumbers or i < 1:
                await ctx.send('This page does not exist')
             else:
                 galleryUrl = await sr.galleryUrl(number)
-                print(galleryUrl)
                 image = await sr.checkpage(galleryUrl, i)
                 embed = discord.Embed()
                 embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))

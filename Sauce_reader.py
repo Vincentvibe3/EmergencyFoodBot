@@ -13,11 +13,11 @@ async def galleryUrl(number):
         async with aiohttp.ClientSession() as session:
             async with session.get('https://nhentai.net/g/%s/1/' %(number), allow_redirects=True) as site:
                     siteContent = await site.text()
-                    start = siteContent.find('/galleries/')
+                    start = siteContent.find('https://i.nhentai.net/galleries/')
                     end = siteContent.find('.jpg')
                     if end == -1:
                         end = siteContent.find('.png')
-        return ('https://i.nhentai.net'+siteContent[start:(end-1)])
+        return (siteContent[start:(end-1)])
 
 async def pagenumbers(number):
         async with aiohttp.ClientSession() as session:
