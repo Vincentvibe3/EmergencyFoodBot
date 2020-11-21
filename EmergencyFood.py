@@ -54,7 +54,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
             await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command()
-async def readsauce(ctx, number):
+async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
     noRestriction = True
     if ctx.guild.name == "The Squad":
         authorRoles = []
@@ -70,7 +70,7 @@ async def readsauce(ctx, number):
             owner = bot.get_user(321812737812594688)
             pagenumbers = int(await sr.pagenumbers(number))
             galleryUrl = await sr.galleryUrl(number)
-            i = 1
+            i = page
             image = await sr.checkpage(galleryUrl, i)
             embed = discord.Embed()
             embed.set_footer(text="Page " + str(i))
