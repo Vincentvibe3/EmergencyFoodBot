@@ -53,7 +53,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
         else: 
             await ctx.send('This command can only be used in NSFW channels')
 
-@bot.command()
+@bot.command(aliases = ['rs'])
 async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
     noRestriction = True
     if ctx.guild.name == "The Squad":
