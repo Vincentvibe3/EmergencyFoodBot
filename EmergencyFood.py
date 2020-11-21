@@ -15,7 +15,7 @@ import Kana_Practice as kp
 #import token
 TOKEN = os.environ['TOKEN']
 #command prefix
-commandPrefix = '$'
+commandPrefix = '.'
 bot = commands.Bot(command_prefix=commandPrefix)
 description = '''$'''
 
@@ -54,7 +54,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
             await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command(aliases = ['rs'])
-async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
+async def readsauce(ctx, number, *, i: typing.Optional[int]=1):
     noRestriction = True
     if ctx.guild.name == "The Squad":
         authorRoles = []
@@ -69,11 +69,11 @@ async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
         if ctx.channel.is_nsfw():
             owner = bot.get_user(321812737812594688)
             pagenumbers = int(await sr.pagenumbers(number))
-            if page > pagenumbers or page < 1:
-                await ctx.send('This page does not exist')
+            if i in range(1, pagenumbers+1):
+               await ctx.send('This page does not exist')
             else:
                 galleryUrl = await sr.galleryUrl(number)
-                i = page
+                print(galleryUrl)
                 image = await sr.checkpage(galleryUrl, i)
                 embed = discord.Embed()
                 embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
@@ -85,7 +85,7 @@ async def readsauce(ctx, number, *, page: typing.Optional[int]=1):
                     newImage = await sr.checkpage(galleryUrl, i)
                     embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
                     embed.set_image(url=newImage)
-                    await tempMessage.edit(embed = embed)
+                    await tempMessage.edit(embed=embed)
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')

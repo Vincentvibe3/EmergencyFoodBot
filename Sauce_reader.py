@@ -15,6 +15,8 @@ async def galleryUrl(number):
                     siteContent = await site.text()
                     start = siteContent.find('/galleries/')
                     end = siteContent.find('.jpg')
+                    if end == -1:
+                        end = siteContent.find('.png')
         return ('https://i.nhentai.net'+siteContent[start:(end-1)])
 
 async def pagenumbers(number):
