@@ -31,6 +31,10 @@ class randomsauce():
     def __init__(self, ctx, tags):
         self.url = 'https://nhentai.net/g/'
         self.ctx = ctx
+        if tags.lower() == 'all':
+            self.random = True
+        else:
+            self.random = False
         self.tagslist = tags.split()
     
     async def get_search_query(self):
@@ -56,8 +60,13 @@ class randomsauce():
                     self.sauceId = randomPageResult['result'][randomSauce]['id']
 
     async def send_sauce(self):
-        await randomsauce.get_random_sauce(self)
-        await self.ctx.send(self.url+self.sauceId)
+        if self.random:
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://nhentai.net/random', allow_redirects=True) as site:
+                    await self.ctx.send(site.url)
+        else:
+            await randomsauce.get_random_sauce(self)
+            await self.ctx.send(self.url+self.sauceId)
 
 class read():
     def __init__(self, ctx, id, owner, currentpage):
