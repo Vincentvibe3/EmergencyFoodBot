@@ -43,12 +43,12 @@ class read():
         self.num_pages = self.sauce['num_pages']
         self.gallery_id = self.sauce['media_id']
 
-    def get_extension(self):
+    async def get_extension(self):
         exttype = self.sauce['images']['pages'][self.currentpage-1]['t']
         self.extension = self.extensions[exttype]
 
     async def send_image(self):
-        read.get_extension(self)
+        await read.get_extension(self)
         if self.currentpage < 1 or self.num_pages < self.currentpage:
             await self.ctx.send('This page does not exist')
         else:
@@ -58,7 +58,7 @@ class read():
             self.message = await self.ctx.send(embed=self.embed)
 
     async def edit_message(self):
-        read.get_extension(self)
+        await read.get_extension(self)
         self.embed.set_footer(text="Page " + str(self.currentpage) + "/" + str(self.num_pages))
         self.embed.set_image(url=self.url+self.gallery_id+'/'+str(self.currentpage)+self.extension)
         await self.message.edit(embed=self.embed)
