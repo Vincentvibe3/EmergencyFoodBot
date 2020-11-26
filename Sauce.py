@@ -9,17 +9,20 @@ async def search(query):
         async with session.get('https://nhentai.net/api/galleries/search?query=%s' %(query)) as searchResult:
             results = await searchResult.json()
             return results
-#not used
-# async def checktag(sauce, tag):
-#     sauceTags = sauce['tags']
-#     tagnames = []
-#     for tags in sauceTags:
-#         tagnames.append(tags['name'])
 
-#     if tag not in tagnames:
-#         return False
-#     else:
-#         return True
+async def checktag(sauce, tags):
+     sauceTags = sauce['tags']
+     tagnames = []
+     for tags in sauceTags:
+         tagnames.append(tags['name'])
+    
+     for tag in tags:
+        if tag not in tagnames:
+            return False
+        else:
+            continue
+    
+     return True
 
 async def getsauce(id):
     async with aiohttp.ClientSession() as session:
@@ -35,28 +38,37 @@ class randomsauce():
             self.random = True
         else:
             self.random = False
-        self.tagslist = tags.split()
+        self.tagslist = tags.split(',')
     
     async def get_search_query(self):
+        tags=[]
+        for tag in self.tagslist:
+            elements = tag.split()
+            for element in elements:
+                tags.append(element)
+
         query = ''
-        for word  in self.tagslist:
+        for word in tags:
             query = query+word+"+"
-        self.query = query[:-1]
+            self.query = query[:-1]
 
     async def get_random_sauce(self):
         await randomsauce.get_search_query(self)
         results = await search(self.query)
         if not results['result']:
-            self.ctx.send('There is no matching sauce')
+            await self.ctx.send('There is no matching sauce')
         else:
             num_pages = results['num_pages']
-            randomPageNum = random.randint(0, num_pages)
-            async with aiohttp.ClientSession() as session:
-                async with session.get('https://nhentai.net/api/galleries/search?query=%s&Page=%s' %(self.query, randomPageNum)) as randomPage:
-                    randomPageResult = await randomPage.json()
-                    num_sauce = len(results['result'])-1
-                    randomSauce = random.randint(0, num_sauce)
-                    self.sauceId = randomPageResult['result'][randomSauce]['id']
+            checkTags = False
+            while not checkTags:
+                randomPageNum = random.randint(0, num_pages)
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('https://nhentai.net/api/galleries/search?query=%s&Page=%s' %(self.query, randomPageNum)) as randomPage:
+                        randomPageResult = await randomPage.json()
+                        num_sauce = len(randomPageResult['result'])-1
+                        randomSauce = random.randint(0, num_sauce)
+                        await checktag(randomPageResult['result'], self.tagslist)
+            self.sauceId = randomPageResult['result'][randomSauce]['id']
 
     async def send_sauce(self):
         if self.random:
