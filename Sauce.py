@@ -65,7 +65,7 @@ class randomsauce():
                     await self.ctx.send(site.url)
         else:
             await randomsauce.get_random_sauce(self)
-            await self.ctx.send(self.url+self.sauceId)
+            await self.ctx.send(self.url+str(self.sauceId))
 
 class read():
     def __init__(self, ctx, id, owner, currentpage):
