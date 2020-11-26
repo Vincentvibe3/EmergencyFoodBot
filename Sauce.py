@@ -9,7 +9,7 @@ async def search(query):
         async with session.get('https://nhentai.net/api/galleries/search?query=%s' %(query)) as searchResult:
             results = await searchResult.json()
             return results
-
+#not used
 # async def checktag(sauce, tag):
 #     sauceTags = sauce['tags']
 #     tagnames = []
@@ -54,7 +54,7 @@ class randomsauce():
             async with aiohttp.ClientSession() as session:
                 async with session.get('https://nhentai.net/api/galleries/search?query=%s&Page=%s' %(self.query, randomPageNum)) as randomPage:
                     randomPageResult = await randomPage.json()
-                    num_sauce = results['per_page']
+                    num_sauce = len(results['result'])-1
                     randomSauce = random.randint(0, num_sauce)
                     self.sauceId = randomPageResult['result'][randomSauce]['id']
 
