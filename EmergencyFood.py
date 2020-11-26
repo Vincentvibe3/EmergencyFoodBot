@@ -9,7 +9,6 @@ import asyncio
 #command modules
 import Sauce as s
 import Sauce_finder as sf
-import reaction_button_check as rbc
 import Kana_Practice as kp
 
 #import token
@@ -34,7 +33,7 @@ async def say(ctx, *, arg):
     await ctx.send(arg)
 
 @bot.command()
-async def sauce(ctx, *, tags: typing.Optional[str] = ''):
+async def sauce(ctx, *, tags: typing.Optional[str] = 'English'):
     noRestriction = True
     if ctx.guild.name == "The Squad":
         authorRoles = []
@@ -47,8 +46,8 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
             noRestriction = True
     if noRestriction == True:
         if ctx.channel.is_nsfw():
-            sauceUrl = await sf.randomUrl(tags)
-            await ctx.send(sauceUrl)    
+            randomsauce = s.randomsauce(ctx, tags)
+            await randomsauce.send_sauce()   
     
         else: 
             await ctx.send('This command can only be used in NSFW channels')
@@ -68,14 +67,11 @@ async def readsauce(ctx, id, *, i: typing.Optional[int]=1):
     if noRestriction == True:
         if ctx.channel.is_nsfw():
             owner = bot.get_user(321812737812594688)
-            sauce = await s.getsauce(id)
-            read = s.read(ctx, sauce, owner, i)
+            read = s.read(ctx, id, owner, i)
             await read.send_image()
-            await read.checkReactions()
             timeout = time.time()+10*60
             while time.time() < timeout:
-                await read.edit_message()
-                await read.checkReactions()
+                await read.edit_message(timeout)
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
