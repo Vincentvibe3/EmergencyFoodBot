@@ -7,15 +7,15 @@ import os
 import asyncio
 
 #command modules
+import Sauce as s
 import Sauce_finder as sf
-import Sauce_reader as sr
 import reaction_button_check as rbc
 import Kana_Practice as kp
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
-commandPrefix = '$'
+commandPrefix = '.'
 bot = commands.Bot(command_prefix=commandPrefix)
 description = '''$'''
 
@@ -54,7 +54,7 @@ async def sauce(ctx, *, tags: typing.Optional[str] = ''):
             await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command(aliases = ['rs'])
-async def readsauce(ctx, number, *, i: typing.Optional[int]=1):
+async def readsauce(ctx, id, *, i: typing.Optional[int]=1):
     noRestriction = True
     if ctx.guild.name == "The Squad":
         authorRoles = []
@@ -68,23 +68,14 @@ async def readsauce(ctx, number, *, i: typing.Optional[int]=1):
     if noRestriction == True:
         if ctx.channel.is_nsfw():
             owner = bot.get_user(321812737812594688)
-            pagenumbers = int(await sr.pagenumbers(number))
-            if i > pagenumbers or i < 1:
-               await ctx.send('This page does not exist')
-            else:
-                galleryUrl = await sr.galleryUrl(number)
-                image = await sr.checkpage(galleryUrl, i)
-                embed = discord.Embed()
-                embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
-                embed.set_image(url=image)
-                tempMessage = await ctx.send(embed=embed)
-                stoptime = time.time()+10*60
-                while time.time() < stoptime:
-                    i = await rbc.checkReactions(ctx, tempMessage, i, pagenumbers, owner, stoptime)
-                    newImage = await sr.checkpage(galleryUrl, i)
-                    embed.set_footer(text="Page " + str(i) + "/" + str(pagenumbers))
-                    embed.set_image(url=newImage)
-                    await tempMessage.edit(embed=embed)
+            sauce = await s.getsauce(id)
+            read = s.read(ctx, sauce, owner, i)
+            await read.send_image()
+            await read.checkReactions()
+            timeout = time.time()+10*60
+            while time.time() < timeout:
+                await read.edit_message()
+                await read.checkReactions()
         
         else: 
             await ctx.send('This command can only be used in NSFW channels')
