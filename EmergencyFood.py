@@ -12,9 +12,9 @@ import Sauce_finder as sf
 import Kana_Practice as kp
 
 #import token
-TOKEN = os.environ['TOKENBETA']
+TOKEN = os.environ['TOKEN']
 #command prefix
-commandPrefix = '.'
+commandPrefix = '$'
 bot = commands.Bot(command_prefix=commandPrefix)
 description = '''$'''
 
