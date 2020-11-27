@@ -70,21 +70,11 @@ class randomsauce():
             checkTags = False
             while not checkTags:
                 randomPageNum = random.randint(1, num_pages)
-                for tries in range(3):
-                    try:
-                        async with aiohttp.ClientSession() as session:
-                            async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
-                                if randomPage.status == 429:
-                                    raise Exception("Too Many Requests")
-                    except Exception:
-                        await asyncio.sleep(4)
-                        continue
-                    else:
-                        break
-
-                randomPageResult = await randomPage.json()
-                randomSauce = random.choice(randomPageResult['result'])
-                checkTags = await checktag(randomSauce, self.tagslist)
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
+                        randomPageResult = await randomPage.json()
+                        randomSauce = random.choice(randomPageResult['result'])
+                        checkTags = await checktag(randomSauce, self.tagslist)
             return randomSauce['id']
 
     async def send_sauce(self):
