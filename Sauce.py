@@ -3,6 +3,7 @@ from discord.ext import commands
 import time
 import random
 import aiohttp
+import asyncio
 import json
 
 async def search(query):
@@ -70,19 +71,20 @@ class randomsauce():
             while not checkTags:
                 randomPageNum = random.randint(1, num_pages)
                 for tries in range(3):
-                async with aiohttp.ClientSession() as session:
-                    async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
-                        if randomPage.status_code != 429:
-                            break
-                        else:
-                            continue
+                    try:
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
+                                if randomPage.status == 429:
+                                    raise Exception("Too Many Requests")
+                    except Exception:
+                        await asyncio.sleep(4)
+                        continue
+                    else:
+                        break
 
-                        randomPageResult = await randomPage.json()
-                        #print(randomPageResult)
-                        randomSauce = random.choice(randomPageResult['result'])
-                        #print(randomPageResult['result'].index(randomSauce))
-                        checkTags = await checktag(randomSauce, self.tagslist)
-            #print(str(randomPageNum) + ':'+str(randomSauce) + ':' + str(randomSauce['id']))
+                randomPageResult = await randomPage.json()
+                randomSauce = random.choice(randomPageResult['result'])
+                checkTags = await checktag(randomSauce, self.tagslist)
             return randomSauce['id']
 
     async def send_sauce(self):
