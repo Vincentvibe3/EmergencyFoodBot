@@ -12,9 +12,9 @@ import Sauce_finder as sf
 import Kana_Practice as kp
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
-commandPrefix = '$'
+commandPrefix = '.'
 bot = commands.Bot(command_prefix=commandPrefix)
 description = '''$'''
 
@@ -68,11 +68,12 @@ async def readsauce(ctx, id, *, i: typing.Optional[int]=1):
         
         if noRestriction == True:
             if ctx.channel.is_nsfw():
-                owner = bot.get_user(bot.owner_id)
+                owner = bot.get_user(321812737812594688)
                 read = s.read(ctx, id, owner, i)
                 await read.send_image()
                 timeout = time.time()+10*60
                 while time.time() < timeout:
+                    print('e')
                     await read.edit_message(timeout)
                     print('g')
         

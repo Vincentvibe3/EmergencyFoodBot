@@ -98,7 +98,6 @@ class read():
         self.ctx = ctx
         self.owner = owner
         self.currentpage = currentpage
-        print(type(self.currentpage))
 
     async def get_sauce_info(self):
         """Get information for the specified hentai"""
