@@ -21,10 +21,18 @@ async def checktag(sauce, tagsToCheck):
         tagnames.append(tags['name'])
 
     for tag in tagsToCheck:
-        if tag.lower() not in tagnames:
+        for element in tagnames:
+            if tag.lower() not in element:
+                check = False
+                continue
+            else:
+                check = True
+                break
+        if not check:
             return False
-        else:
-            continue
+    
+    return True
+
     
     return True
 
@@ -69,6 +77,7 @@ class randomsauce():
             num_pages = results['num_pages']
             checkTags = False
             while not checkTags:
+                print('working')
                 randomPageNum = random.randint(1, num_pages)
                 async with aiohttp.ClientSession() as session:
                     async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
