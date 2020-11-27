@@ -54,27 +54,30 @@ async def sauce(ctx, *, tags: typing.Optional[str] = 'English'):
 
 @bot.command(aliases = ['rs'])
 async def readsauce(ctx, id, *, i: typing.Optional[int]=1):
-    noRestriction = True
-    if ctx.guild.name == "The Squad":
-        authorRoles = []
-        for role in ctx.author.roles:
-            authorRoles.append(role.name)
-        if 'Sauce for you' not in authorRoles:
-            noRestriction = False
-            await ctx.send('This role cannot use sauce commands')
-        else:
-            noRestriction = True
-    if noRestriction == True:
-        if ctx.channel.is_nsfw():
-            owner = bot.get_user(321812737812594688)
-            read = s.read(ctx, id, owner, i)
-            await read.send_image()
-            timeout = time.time()+10*60
-            while time.time() < timeout:
-                await read.edit_message(timeout)
+    if ctx.channel.is_nsfw():
+        noRestriction = True
+        if ctx.guild.name == "The Squad":
+            authorRoles = []
+            for role in ctx.author.roles:
+                authorRoles.append(role.name)
+            if 'Sauce for you' not in authorRoles:
+                noRestriction = False
+                await ctx.send('This role cannot use sauce commands')
+            else:
+                noRestriction = True
         
-        else: 
-            await ctx.send('This command can only be used in NSFW channels')
+        if noRestriction == True:
+            if ctx.channel.is_nsfw():
+                owner = bot.get_user(321812737812594688)
+                read = s.read(ctx, id, owner, i)
+                await read.send_image()
+                timeout = time.time()+10*60
+                while time.time() < timeout:
+                    await read.edit_message(timeout)
+                    print('g')
+        
+    else: 
+        await ctx.send('This command can only be used in NSFW channels')
 
 @bot.command(aliases = ['pk'])
 async def practicekana(ctx, mode=''):
@@ -102,5 +105,29 @@ async def practicekana(ctx, mode=''):
     else:
         await ctx.send('Please enter a valid mode(hiragana or katakana)')
 
+# @bot.event
+# async def on_message(ctx, *, tags: typing.Optional[str] = 'k-on'):
+#     tags = input()
+#     if ctx.author == bot.get_user(774017121243365384):
+#         noRestriction = True
+#         if ctx.guild.name == "The Squad":
+#             authorRoles = []
+#             for role in ctx.author.roles:
+#                 authorRoles.append(role.name)
+#             if 'Sauce for you' not in authorRoles:
+#                 noRestriction = False
+#                 await ctx.send('This role cannot use sauce commands')
+#             else:
+#                 noRestriction = True
+#         if noRestriction == True:
+#             if ctx.channel.is_nsfw():
+#                 ctx = ctx.channel
+#                 randomsauce = s.randomsauce(ctx, tags)
+#                 await randomsauce.send_sauce()   
+        
+#             else: 
+#                 await ctx.send('This command can only be used in NSFW channels')
+#     else:
+#         pass
 
 bot.run(TOKEN)
