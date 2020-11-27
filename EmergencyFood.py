@@ -108,9 +108,8 @@ async def practicekana(ctx, mode=''):
 
 #testing commands
 @bot.command()
-async def testsauce(ctx, *, tags: typing.Optional[str] = 'English'):
+async def testsauce(ctx, testtimes:int, *, tags: typing.Optional[str] = 'English'):
     if ctx.author == bot.get_user(321812737812594688):
-        testtimes = 50
         for i in range(testtimes):
             print(i)
             await sauce(ctx, tags=tags)
