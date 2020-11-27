@@ -110,10 +110,11 @@ async def practicekana(ctx, mode=''):
 @bot.command()
 async def testsauce(ctx, *, tags: typing.Optional[str] = 'English'):
     if ctx.author == bot.get_user(bot.owner_id):
-        for i in range(50):
+        testtimes = 1
+        for i in range(testtimes):
             print(i)
             await sauce(ctx, tags=tags)
-        await purgebots(ctx)
+        await purgebots(ctx, limit=testtimes)
     else:
         await ctx.send('You do not have the required permissions')
 
@@ -121,9 +122,9 @@ def is_bot(ctx):
     return ctx.author == bot.get_user(774017121243365384) or ctx.author == bot.get_user(772251680103464970) or ctx.author == bot.get_user(772256300389236767)
 
 @bot.command()
-async def purgebots(ctx):
+async def purgebots(ctx, limit=None):
     if ctx.author == bot.get_user(bot.owner_id) or bot:
-        await ctx.channel.purge(check=is_bot, bulk=True)
+        await ctx.channel.purge(limit=limit, check=is_bot, bulk=True)
     else:
         await ctx.send('You do not have the required permissions')
 
