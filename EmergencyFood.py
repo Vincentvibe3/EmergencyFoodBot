@@ -12,7 +12,7 @@ import Sauce_finder as sf
 import Kana_Practice as kp
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix=commandPrefix)
@@ -109,8 +109,8 @@ async def practicekana(ctx, mode=''):
 #testing commands
 @bot.command()
 async def testsauce(ctx, *, tags: typing.Optional[str] = 'English'):
-    if ctx.author == bot.get_user(bot.owner_id):
-        testtimes = 1
+    if ctx.author == bot.get_user(321812737812594688):
+        testtimes = 50
         for i in range(testtimes):
             print(i)
             await sauce(ctx, tags=tags)
