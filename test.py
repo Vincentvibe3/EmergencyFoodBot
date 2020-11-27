@@ -3,30 +3,59 @@ import random
 import aiohttp
 import asyncio
 
-search = input('enter a tag\n')
-#r = requests.get('https://nhentai.net/api/gallery/167738')
-r = requests.get('https://nhentai.net/api/galleries/search?query=%s' %(search))
+def get_search_query(check):
+        tags=[]
+        for tag in check:
+            elements = tag.split()
+            for element in elements:
+                tags.append(element)
+
+        query = ''
+        for word in tags:
+            query = query+word+"+"
+        query = query[:-1]
+        return query
+
 def gettagid():
     results = r.json()['result']
     for result in results:
         tags = result['tags']
         tagnames = {}
-        toCheck = [search]
+        toCheck = search.split(', ')
         for tag in tags:
             tagnames[tag['name']]=tag['id']
         for tag in toCheck:
             if tag not in tagnames:
                 print('missing tag: ' + tag)
+                return False
             else:
-                return tagnames[tag]
+                continue
+        
+        all.append(result['id'])
 
-tagid = gettagid()
-r2 = requests.get("https://nhentai.net/api/galleries/tagged?tag_id=%s" %(tagid))
-maxpage = r2.json()['num_pages']
-randompage = random.randint(1, maxpage)
-r3 = requests.get("https://nhentai.net/api/galleries/tagged?tag_id=%s&page=%s" %(tagid, randompage))
-results = r3.json()['result']
-sauce = random.choice(results)
-print('https://nhentai.net/g/%s' %(sauce['id']))
-print(sauce)
-input()
+# search = input('enter a tag\n')
+# query = get_search_query(search.split(', '))
+# all=[]
+# r = requests.get('https://nhentai.net/api/galleries/search?query=%s' %(query))
+# num_pages = r.json()['num_pages']
+# for i in range(num_pages+1):
+# #r = requests.get('https://nhentai.net/api/gallery/167738')
+#     print(i)
+#     gettagid()
+#     r = requests.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, i+1))
+# print(all)
+# print(len(all))   
+
+r = requests.get('https://nhentai.net/api/galleries/tagged?tag_id=29433')
+pages = r.json()['num_pages']
+listsauce = []
+for i in range(pages):
+    page = requests.get('https://nhentai.net/api/galleries/tagged?tag_id=29433&page=%s' %(i+1))
+    for result in page.json()['result']:
+        tags = []
+        for tag in result['tags']:
+            tags.append(tag['name'])
+        if 'english' in tags:
+            listsauce.append(result['id'])
+print(listsauce)
+print(len(listsauce))

@@ -17,7 +17,6 @@ async def checktag(sauce, tagsToCheck):
         tagnames.append(tags['name'])
 
     for tag in tagsToCheck:
-        print(tag.lower())
         if tag.lower() not in tagnames:
             return False
         else:
@@ -51,7 +50,7 @@ class randomsauce():
         query = ''
         for word in tags:
             query = query+word+"+"
-            self.query = query[:-1]
+        self.query = query[:-1]
 
     async def get_random_sauce(self):
         await randomsauce.get_search_query(self)
@@ -62,8 +61,7 @@ class randomsauce():
             num_pages = results['num_pages']
             checkTags = False
             while not checkTags:
-                randomPageNum = random.randint(0, num_pages)
-                print(randomPageNum)
+                randomPageNum = random.randint(1, num_pages)
                 async with aiohttp.ClientSession() as session:
                     async with session.get('https://nhentai.net/api/galleries/search?query=%s&Page=%s' %(self.query, randomPageNum)) as randomPage:
                         randomPageResult = await randomPage.json()
@@ -71,6 +69,7 @@ class randomsauce():
                         randomSauce = random.randint(0, num_sauce)
                         checkTags = await checktag(randomPageResult['result'][randomSauce], self.tagslist)
             self.sauceId = randomPageResult['result'][randomSauce]['id']
+            print(str(randomPageNum)+':'+str(randomSauce)+':'+str(self.sauceId))
 
     async def send_sauce(self):
         if self.random:
