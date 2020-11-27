@@ -109,7 +109,7 @@ async def practicekana(ctx, mode=''):
 @bot.command()
 async def testsauce(ctx, *, tags: typing.Optional[str] = 'English'):
     if ctx.author == bot.get_user(321812737812594688):
-        for i in range(1):
+        for i in range(50):
             print(i)
             await sauce(ctx, tags=tags)
         await purgebots(ctx)
