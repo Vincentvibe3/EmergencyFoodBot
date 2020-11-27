@@ -69,8 +69,14 @@ class randomsauce():
             checkTags = False
             while not checkTags:
                 randomPageNum = random.randint(1, num_pages)
+                for tries in range(3):
                 async with aiohttp.ClientSession() as session:
                     async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
+                        if randomPage.status_code != 429:
+                            break
+                        else:
+                            continue
+
                         randomPageResult = await randomPage.json()
                         #print(randomPageResult)
                         randomSauce = random.choice(randomPageResult['result'])
