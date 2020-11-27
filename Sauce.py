@@ -33,14 +33,13 @@ async def checktag(sauce, tagsToCheck):
     
     return True
 
-    
-    return True
-
 async def getsauce(id):
     """gets info for a specific hentai"""
     async with aiohttp.ClientSession() as session:
         async with session.get('https://nhentai.net/api/gallery/%s' %(id)) as result:
             sauce = await result.json()
+            if 'error' in sauce:
+                return False
             return sauce
 
 class randomsauce():
@@ -111,8 +110,12 @@ class read():
     async def get_sauce_info(self):
         """Get information for the specified hentai"""
         self.sauce = await getsauce(self.id)
-        self.num_pages = self.sauce['num_pages']
-        self.gallery_id = self.sauce['media_id']
+        if self.sauce == False:
+            self.nonexistent = True
+            await self.ctx.send('This sauce does not exist')
+        else:
+            self.num_pages = self.sauce['num_pages']
+            self.gallery_id = self.sauce['media_id']
 
     async def get_extension(self):
         """get a page's file extension"""
@@ -122,23 +125,29 @@ class read():
     async def send_image(self):
         """send image to discord"""
         await read.get_sauce_info(self)
-        await read.get_extension(self)
-        if self.currentpage < 1 or self.num_pages < self.currentpage:
-            await self.ctx.send('This page does not exist')
+        if self.nonexistent:
+            pass
         else:
-            self.embed = discord.Embed()
-            self.embed.set_footer(text="Page " + str(self.currentpage) + "/" + str(self.num_pages))
-            self.embed.set_image(url=self.url+self.gallery_id+'/'+str(self.currentpage)+self.extension)
-            self.message = await self.ctx.send(embed=self.embed)
-            self.currentpage = await read.checkReactions(self)
+            await read.get_extension(self)
+            if self.currentpage < 1 or self.num_pages < self.currentpage:
+                await self.ctx.send('This page does not exist')
+            else:
+                self.embed = discord.Embed()
+                self.embed.set_footer(text="Page " + str(self.currentpage) + "/" + str(self.num_pages))
+                self.embed.set_image(url=self.url+self.gallery_id+'/'+str(self.currentpage)+self.extension)
+                self.message = await self.ctx.send(embed=self.embed)
+                self.currentpage = await read.checkReactions(self)
 
     async def edit_message(self, timeout):
         """edits the message and embed after using controls"""
-        await read.get_extension(self)
-        self.embed.set_footer(text="Page " + str(self.currentpage) + "/" + str(self.num_pages))
-        self.embed.set_image(url=self.url+self.gallery_id+'/'+str(self.currentpage)+self.extension)
-        await self.message.edit(embed=self.embed)
-        self.currentpage = await read.checkReactions(self, timeout=timeout)
+        if self.nonexistent:
+            pass
+        else:
+            await read.get_extension(self)
+            self.embed.set_footer(text="Page " + str(self.currentpage) + "/" + str(self.num_pages))
+            self.embed.set_image(url=self.url+self.gallery_id+'/'+str(self.currentpage)+self.extension)
+            await self.message.edit(embed=self.embed)
+            self.currentpage = await read.checkReactions(self, timeout=timeout)
 
 
     async def checkReactions(self, timeout=None):
