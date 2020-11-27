@@ -12,7 +12,7 @@ import Sauce_finder as sf
 import Kana_Practice as kp
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix=commandPrefix)
@@ -105,29 +105,25 @@ async def practicekana(ctx, mode=''):
     else:
         await ctx.send('Please enter a valid mode(hiragana or katakana)')
 
-# @bot.event
-# async def on_message(ctx, *, tags: typing.Optional[str] = 'k-on'):
-#     tags = input()
-#     if ctx.author == bot.get_user(774017121243365384):
-#         noRestriction = True
-#         if ctx.guild.name == "The Squad":
-#             authorRoles = []
-#             for role in ctx.author.roles:
-#                 authorRoles.append(role.name)
-#             if 'Sauce for you' not in authorRoles:
-#                 noRestriction = False
-#                 await ctx.send('This role cannot use sauce commands')
-#             else:
-#                 noRestriction = True
-#         if noRestriction == True:
-#             if ctx.channel.is_nsfw():
-#                 ctx = ctx.channel
-#                 randomsauce = s.randomsauce(ctx, tags)
-#                 await randomsauce.send_sauce()   
-        
-#             else: 
-#                 await ctx.send('This command can only be used in NSFW channels')
-#     else:
-#         pass
+#testing commands
+@bot.command()
+async def testsauce(ctx, *, tags: typing.Optional[str] = 'English'):
+    if ctx.author == bot.get_user(321812737812594688):
+        for i in range(1):
+            print(i)
+            await sauce(ctx, tags=tags)
+        await purgebots(ctx)
+    else:
+        await ctx.send('You do not have the required permissions')
+
+def is_bot(ctx):
+    return ctx.author == bot.get_user(774017121243365384) or ctx.author == bot.get_user(772251680103464970) or ctx.author == bot.get_user(772256300389236767)
+
+@bot.command()
+async def purgebots(ctx):
+    if ctx.author == bot.get_user(321812737812594688) or bot:
+        await ctx.channel.purge(check=is_bot, bulk=True)
+    else:
+        await ctx.send('You do not have the required permissions')
 
 bot.run(TOKEN)
