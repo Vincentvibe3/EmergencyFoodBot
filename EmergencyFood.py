@@ -73,9 +73,7 @@ async def readsauce(ctx, id, *, i: typing.Optional[int]=1):
                 await read.send_image()
                 timeout = time.time()+10*60
                 while time.time() < timeout:
-                    print('e')
                     await read.edit_message(timeout)
-                    print('g')
         
     else: 
         await ctx.send('This command can only be used in NSFW channels')

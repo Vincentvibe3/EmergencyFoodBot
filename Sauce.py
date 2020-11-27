@@ -77,7 +77,6 @@ class randomsauce():
             num_pages = results['num_pages']
             checkTags = False
             while not checkTags:
-                print('working')
                 randomPageNum = random.randint(1, num_pages)
                 async with aiohttp.ClientSession() as session:
                     async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
@@ -94,7 +93,10 @@ class randomsauce():
                     await self.ctx.send(site.url)
         else:
             sauceId = await randomsauce.get_random_sauce(self)
-            await self.ctx.send(self.url+str(sauceId))
+            if sauceId == None:
+                pass
+            else:
+                await self.ctx.send(self.url+str(sauceId))
 
 class read():
     """sends an embed with the url to a hentai page with controls to read"""
