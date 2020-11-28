@@ -79,6 +79,7 @@ class randomsauce():
                 randomPageNum = random.randint(1, num_pages)
                 async with aiohttp.ClientSession() as session:
                     async with session.get('https://nhentai.net/api/galleries/search?query=%s&page=%s' %(query, randomPageNum)) as randomPage:
+                        self.randomPage = randomPage
                         randomPageResult = await randomPage.json()
                         randomSauce = random.choice(randomPageResult['result'])
                         checkTags = await checktag(randomSauce, self.tagslist)
@@ -114,6 +115,7 @@ class read():
             self.nonexistent = True
             await self.ctx.send('This sauce does not exist')
         else:
+            self.nonexistent = False
             self.num_pages = self.sauce['num_pages']
             self.gallery_id = self.sauce['media_id']
 
