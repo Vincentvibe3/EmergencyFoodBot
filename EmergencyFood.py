@@ -8,7 +8,6 @@ import asyncio
 
 #command modules
 import Sauce as s
-import Sauce_finder as sf
 import Kana_Practice as kp
 
 #import token
