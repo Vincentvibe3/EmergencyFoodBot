@@ -110,7 +110,7 @@ class recommendations():
                     all_related_artists.append(chosen_artist)
             else:
                 continue
-            
+
         return all_related_artists
 
     async def get_user_market(self):
@@ -262,4 +262,5 @@ class recommendations():
         profile, weights = await recommendations.build_user_profile(self, top_analysis)
         rec_analysis = await recommendations.get_tracks_analysis(self, top_related)
         recs = await recommendations.build_recommendations(self, profile, rec_analysis, weights, top_rel_info)
+        await message.delete()
         await self.ctx.send(embed=recs)
