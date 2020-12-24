@@ -66,8 +66,8 @@ class recommendations():
             refresh_parameters = {'grant_type': 'refresh_token', "refresh_token": self.refresh_token, 'client_id':client_id, 'client_secret':  client_secret}
             async with aiohttp.ClientSession() as session:
                 async with session.post('https://accounts.spotify.com/api/token', data=refresh_parameters, headers=refresh_headers) as new_token:
-                    json = await new_token.text()
-                    content = json.loads(json)
+                    json_data = await new_token.text()
+                    content = json.loads(json_data)
                     self.access_token = content['access_token']
                     self.expiry_time = time.time()+content['expires_in']
                     cur.execute("UPDATE users SET access_token='{}', expiry={} WHERE id='{}';".format(self.access_token, self.expiry_time, self.user_id))
@@ -79,8 +79,8 @@ class recommendations():
     async def toptracksinfo(self):
         async with aiohttp.ClientSession() as session:
             async with session.get('https://api.spotify.com/v1/me/top/tracks', headers=self.headers) as response:
-                json = await response.text()
-                content = json.loads(json)
+                json_data = await response.text()
+                content = json.loads(json_data)
         artists = []
         songs = []
         for song in content['items']:
@@ -98,8 +98,8 @@ class recommendations():
             related_artists = []
             async with aiohttp.ClientSession() as session:
                 async with session.get('https://api.spotify.com/v1/artists/%s/related-artists' %(artist), headers=self.headers) as results:
-                    json = await results.text()
-                    content = json.loads(json)
+                    json_data = await results.text()
+                    content = json.loads(json_data)
             
             for related_artist in content['artists']:
                 related_artists.append(related_artist['id'])
@@ -111,8 +111,8 @@ class recommendations():
     async def get_user_market(self):
         async with aiohttp.ClientSession() as session:
             async with session.get('https://api.spotify.com/v1/me', headers=self.headers) as results:
-                json = await results.text()
-                content = json.loads(json)
+                json_data = await results.text()
+                content = json.loads(json_data)
         
         market = content["country"]
         return market
@@ -125,8 +125,8 @@ class recommendations():
             parameters={'market':usermarket}
             async with aiohttp.ClientSession() as session:
                 async with session.get('https://api.spotify.com/v1/artists/%s/top-tracks' %(artist), params=parameters, headers=self.headers) as results:
-                    json = await results.text()
-                    content = json.loads(json)
+                    json_data = await results.text()
+                    content = json.loads(json_data)
 
             for track in content['tracks'][:5]:
                 allartists = ""
@@ -148,8 +148,8 @@ class recommendations():
         parameters={"ids": alltracks}
         async with aiohttp.ClientSession() as session:
             async with session.get('https://api.spotify.com/v1/audio-features', params=parameters, headers=self.headers) as results:
-                json = await results.text()
-                content = json.loads(json)
+                json_data = await results.text()
+                content = json.loads(json_data)
         
         analysis = content['audio_features']
         return analysis
