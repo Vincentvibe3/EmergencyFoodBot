@@ -102,12 +102,15 @@ class recommendations():
                     content = json.loads(json_data)
             
             for related_artist in content['artists']:
-                print(related_artist['id'])
                 related_artists.append(related_artist['id'])
-            print(related_artists)
-            chosen_artist = random.choice(related_artists)
-            if chosen_artist not in all_related_artists:
-                all_related_artists.append(chosen_artist)
+            
+            if related_artists:
+                chosen_artist = random.choice(related_artists)
+                if chosen_artist not in all_related_artists:
+                    all_related_artists.append(chosen_artist)
+            else:
+                continue
+            
         return all_related_artists
 
     async def get_user_market(self):
