@@ -241,7 +241,7 @@ class recommendations():
         scores.reverse()
         for song in scores[:5]:
             song_info = info[song[1]]
-            embed.add_field(name=str(scores.index(song)+1), value=song_info['name']+" by "+song_info['artist']+" \n"+song_info['url'])
+            embed.add_field(name=str(scores.index(song)+1), value=song_info['name']+" by "+song_info['artist']+" \n[link]("+song_info['url']+")", inline=False)
             #recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" \n [link]("+song_info['url']+")\n")
         
         return embed#recommendations_message
