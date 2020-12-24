@@ -100,6 +100,7 @@ class recommendations():
                 async with session.get('https://api.spotify.com/v1/artists/%s/related-artists' %(artist), headers=self.headers) as results:
                     json_data = await results.text()
                     content = json.loads(json_data)
+                    print(content)
             
             for related_artist in content['artists']:
                 related_artists.append(related_artist['id'])
@@ -230,8 +231,7 @@ class recommendations():
         return song_score
 
     async def build_recommendations(self, profile, songs, weights, info):
-        embed = discord.Embed()
-        recommendations_message = ""
+        embed = discord.Embed(title='Recommendations')
         scores= []
         for song in songs:
             score = await recommendations.build_song_score(self, profile, song, weights)
@@ -242,9 +242,8 @@ class recommendations():
         for song in scores[:5]:
             song_info = info[song[1]]
             embed.add_field(name=str(scores.index(song)+1), value=song_info['name']+" by "+song_info['artist']+" \n[link]("+song_info['url']+")", inline=False)
-            #recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" \n [link]("+song_info['url']+")\n")
         
-        return embed#recommendations_message
+        return embed
 
     async def get_recommendations(self):
         await recommendations.get_access(self)
