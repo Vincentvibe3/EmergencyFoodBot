@@ -9,6 +9,7 @@ import asyncio
 #command modules
 import Sauce as s
 import Kana_Practice as kp
+import spotify
 
 #import token
 TOKEN = os.environ['TOKEN']
@@ -102,6 +103,10 @@ async def practicekana(ctx, mode=''):
         await ctx.send('You must specify a mode(hiragana or katakana)') 
     else:
         await ctx.send('Please enter a valid mode(hiragana or katakana)')
+
+@bot.command(aliases = ['sp'])
+async def spotify(ctx, username=''):
+    await spotify.register(ctx, username)
 
 #testing commands
 @bot.command()
