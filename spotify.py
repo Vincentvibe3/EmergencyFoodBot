@@ -257,4 +257,4 @@ class recommendations():
         profile, weights = await recommendations.build_user_profile(self, top_analysis)
         rec_analysis = await recommendations.get_tracks_analysis(self, top_related)
         recs = await recommendations.build_recommendations(self, profile, rec_analysis, weights, top_rel_info)
-        self.ctx.send(recs)
+        await self.ctx.send(recs)
