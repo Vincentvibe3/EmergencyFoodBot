@@ -100,9 +100,10 @@ class recommendations():
                 async with session.get('https://api.spotify.com/v1/artists/%s/related-artists' %(artist), headers=self.headers) as results:
                     json_data = await results.text()
                     content = json.loads(json_data)
-                    print(content)
+                    print(content['artists'])
             
             for related_artist in content['artists']:
+                print(related_artist['id'])
                 related_artists.append(related_artist['id'])
             chosen_artist = random.choice(related_artists)
             if chosen_artist not in all_related_artists:
