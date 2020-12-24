@@ -105,7 +105,7 @@ async def practicekana(ctx, mode=''):
         await ctx.send('Please enter a valid mode(hiragana or katakana)')
 
 @bot.command(aliases = ['sp'])
-async def spotify(ctx, username=''):
+async def spotifyrecs(ctx, username=''):
     await spotify.register(ctx, username)
 
 #testing commands
