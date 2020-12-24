@@ -230,6 +230,7 @@ class recommendations():
         return song_score
 
     async def build_recommendations(self, profile, songs, weights, info):
+        embed = discord.Embed()
         recommendations_message = ""
         scores= []
         for song in songs:
@@ -240,9 +241,10 @@ class recommendations():
         scores.reverse()
         for song in scores[:5]:
             song_info = info[song[1]]
-            recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" \n [link]("+song_info['url']+")\n")
+            embed.add_field(name=str(scores.index(song)+1), value=song_info['name']+" by "+song_info['artist']+" \n"+song_info['url'])
+            #recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" \n [link]("+song_info['url']+")\n")
         
-        return recommendations_message
+        return embed#recommendations_message
 
     async def get_recommendations(self):
         await recommendations.get_access(self)
@@ -257,5 +259,4 @@ class recommendations():
         profile, weights = await recommendations.build_user_profile(self, top_analysis)
         rec_analysis = await recommendations.get_tracks_analysis(self, top_related)
         recs = await recommendations.build_recommendations(self, profile, rec_analysis, weights, top_rel_info)
-        embed = discord.Embed()
-        await self.ctx.send(recs)
+        await self.ctx.send(embed=recs)
