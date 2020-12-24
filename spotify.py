@@ -20,6 +20,9 @@ async def register(ctx, username):
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cur = conn.cursor()
     cur.execute("INSERT INTO users(name, id) VALUES(%s, %s);", (username, user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
     login_url = await get_login_url()
     await ctx.send(login_url)
 
