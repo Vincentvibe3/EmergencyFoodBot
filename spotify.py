@@ -10,7 +10,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
 
 client_id = os.environ['CLIENT_ID']
 client_secret = os.environ['CLIENT_SECRET']
