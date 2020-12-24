@@ -248,7 +248,7 @@ class recommendations():
         await recommendations.get_access(self)
         message = await self.ctx.send('Getting your top tracks(1/4)')
         top_artists, top_songs = await recommendations.toptracksinfo(self)
-        await message.edit('Getting related artists(2/4)')
+        await message.edit(content='Getting related artists(2/4)')
         related_artists = await recommendations.get_related_artists(self, top_artists)
         await message.edit('Getting top tracks(3/4)')
         top_related, top_rel_info = await recommendations.get_top_tracks(self, related_artists)
