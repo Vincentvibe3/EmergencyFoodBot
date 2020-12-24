@@ -240,7 +240,7 @@ class recommendations():
         scores.reverse()
         for song in scores[:5]:
             song_info = info[song[1]]
-            recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" url: "+song_info['url']+"\n")
+            recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" \n [link]("+song_info['url']+")\n")
         
         return recommendations_message
 
@@ -257,4 +257,5 @@ class recommendations():
         profile, weights = await recommendations.build_user_profile(self, top_analysis)
         rec_analysis = await recommendations.get_tracks_analysis(self, top_related)
         recs = await recommendations.build_recommendations(self, profile, rec_analysis, weights, top_rel_info)
+        embed = discord.Embed()
         await self.ctx.send(recs)
