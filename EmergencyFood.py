@@ -106,7 +106,8 @@ async def practicekana(ctx, mode=''):
 
 @bot.command(aliases = ['sp'])
 async def spotifyrecs(ctx, username=''):
-    await spotify.register(ctx, username)
+    register = spotify.register(ctx, username)
+    await register.register() 
 
 #testing commands
 @bot.command()
