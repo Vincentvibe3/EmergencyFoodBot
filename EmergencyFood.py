@@ -106,8 +106,19 @@ async def practicekana(ctx, mode=''):
 
 @bot.command(aliases = ['sp'])
 async def spotifyrecs(ctx, username=''):
-    register = spotify.register(ctx, username)
-    await register.register() 
+    check = await spotify.check_membership(ctx)
+    if check and username == '':
+        recommendations = spotify.recommendations(ctx)
+        await recommendations.get_recommendations()
+    elif check and username != '':
+        await ctx.send('The username only needs to be given on registration')
+        recommendations = spotify.recommendations(ctx)
+        await recommendations.get_recommendations()
+    elif not check and username == '':
+        await ctx.send('Please register first by giving your username')
+    else:
+        register = spotify.register(ctx, username)
+        await register.register() 
 
 #testing commands
 @bot.command()

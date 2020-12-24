@@ -15,6 +15,18 @@ DATABASE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
 client_id = os.environ['CLIENT_ID']
 client_secret = os.environ['CLIENT_SECRET']
 
+async def check_membership(ctx):
+    user_id = str(ctx.author.id)
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE id='{}';".format(user_id))
+    result = cur.fetchone()
+    if result == None:
+        return False
+    else:
+        return True
+    cur.close()
+    conn.close()
 
 class register():
     def __init__(self, ctx, username):
@@ -63,11 +75,10 @@ class recommendations():
         conn.close()
         self.headers={"Authorization":"Bearer "+self.access_token, "Accept": "application/json", "Content-Type": "application/json"}
 
-    async def toptracksinfo():
-        response = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers)
-        datafile = open("data.json" ,"w")
-        content = json.loads(response.text)
-        datafile.write(json.dumps(content, indent=4))
+    async def toptracksinfo(self):
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.spotify.com/v1/me/top/tracks', headers=self.headers) as response:
+                content = json.loads(response.text())
         artists = []
         songs = []
         for song in content['items']:
@@ -78,38 +89,15 @@ class recommendations():
         
         return artists, songs
 
-    async def get_search_params(query):
-        parameters={'q':"genre:"+query, "type":"track,artist"}
-        try:
-            search = requests.get('https://api.spotify.com/v1/search', headers=headers, params=parameters)
-            if search.status_code == 429:
-                raise 'too fast'
-        except Exception:
-            print('toofast')
-        results = json.loads(search.text)
-        if results['artists']['total'] == 0:
-            total = results['tracks']['total']
-            return total, 'track'
-        else:
-            total = results['artists']['total']
-        if total > 1:
-            if total > 200:
-                total = 200
-            else:
-                total = total-2
-        elif total == 1:
-            total = 0
-        else:
-            print('no results')
-        return total, 'artist'
-
-    async def get_related_artists(artists):
+    async def get_related_artists(self, artists):
         #print(genres)
         all_related_artists = []
         for artist in artists:
             related_artists = []
-            results = requests.get('https://api.spotify.com/v1/artists/%s/related-artists' %(artist), headers=headers)
-            content = json.loads(results.text)
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://api.spotify.com/v1/artists/%s/related-artists' %(artist), headers=self.headers) as results:
+                    content = json.loads(results.text)
+            
             for related_artist in content['artists']:
                 related_artists.append(related_artist['id'])
             chosen_artist = random.choice(related_artists)
@@ -117,20 +105,24 @@ class recommendations():
                 all_related_artists.append(chosen_artist)
         return all_related_artists
 
-    async def get_user_market():
-        results = requests.get('https://api.spotify.com/v1/me', headers=headers)
-        content = json.loads(results.text)
+    async def get_user_market(self):
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.spotify.com/v1/me', headers=self.headers) as results:
+                content = json.loads(results.text)
+        
         market = content["country"]
         return market
 
-    async def get_top_tracks(artists):
+    async def get_top_tracks(self, artists):
         toptracks = []
         info = {}
-        usermarket = get_user_market()
+        usermarket = await recommendations.get_user_market(self)
         for artist in artists:
             parameters={'market':usermarket}
-            results = requests.get('https://api.spotify.com/v1/artists/%s/top-tracks' %(artist), params=parameters, headers=headers)
-            content = json.loads(results.text)
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://api.spotify.com/v1/artists/%s/top-tracks' %(artist), params=parameters, headers=self.headers) as results:
+                    content = json.loads(results.text)
+
             for track in content['tracks'][:5]:
                 allartists = ""
                 artists_list = track['artists']
@@ -142,19 +134,21 @@ class recommendations():
                 info[track['id']] = {'name':track['name'], 'url':track['external_urls']['spotify'], 'artist':allartists}
         return toptracks, info
 
-    async def get_tracks_analysis(tracks):
+    async def get_tracks_analysis(self, tracks):
         analysis = []
         alltracks = ""
         for track in tracks:
             alltracks = alltracks+track+","
         alltracks=alltracks[:-1]
         parameters={"ids": alltracks}
-        results = requests.get('https://api.spotify.com/v1/audio-features', params=parameters, headers=headers)
-        content = json.loads(results.text)
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.spotify.com/v1/audio-features', params=parameters, headers=self.headers) as results:
+                content = json.loads(results.text)
+        
         analysis = content['audio_features']
         return analysis
 
-    async def get_user_taste(songs, feature):
+    async def get_user_taste(self, songs, feature):
         allsongs=[]
         for song in songs:
             allsongs.append(song[feature])
@@ -177,7 +171,7 @@ class recommendations():
             elif value >= separator3 and value <= max:
                 quartiles['4'].append(value)
             else:
-                print('something went wrong')
+                pass
         score = 0
         for quartile in quartiles:
             if quartiles[quartile]:
@@ -189,7 +183,7 @@ class recommendations():
         
         return score
 
-    async def get_feature_weights(songs, feature, features):
+    async def get_feature_weights(self, songs, feature, features):
         allsongs=[]
         for song in songs:
             allsongs.append(song[feature])
@@ -202,84 +196,59 @@ class recommendations():
             weight = 1/(1+difference)
         return weight
 
-    async def build_user_profile(analysis):
+    async def build_user_profile(self, analysis):
         features = {'danceability':{'max':1, 'min':0}, 'energy':{'max':1, 'min':0}, 'loudness':{'max':0, 'min':-60}, 'speechiness':{'max':1, 'min':0}, 'acousticness':{'max':1, 'min':0}, 'instrumentalness':{'max':1, 'min':0}, 'liveness':{'max':1, 'min':0}, 'valence':{'max':1, 'min':0}, 'tempo':None, 'duration_ms':None}
         profile = {}
         weights = {}
         for feature in features:
-            profile[feature] = get_user_taste(analysis, feature)
-            weights[feature] = get_feature_weights(analysis, feature, features)
+            profile[feature] = await recommendations.get_user_taste(self, analysis, feature)
+            weights[feature] = await recommendations.get_feature_weights(self, analysis, feature, features)
         return profile, weights
 
-    async def get_feature_sim(profile, feature1, feature2, song):
+    async def get_feature_sim(self, profile, feature1, feature2, song):
         distance1 = profile[feature1]-song[feature1]
         distance2 = profile[feature1]-song[feature1]
         sim = math.sqrt(pow(distance1, 2)+pow(distance2, 2))
         score = 1/(1+sim)
         return score
 
-    async def build_song_score(user, song, weights):
+    async def build_song_score(self, user, song, weights):
         features = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_ms']
         song_score = 0
         for feature1 in features[:-1]:
             current_index = features.index(feature1)
             for feature2 in features[current_index:]:
-                score = get_feature_sim(user, feature1, feature2, song)
+                score = await recommendations.get_feature_sim(self, user, feature1, feature2, song)
                 song_score += score*weights[feature1]*weights[feature2]
         
         return song_score
 
-    async def get_recommendations(profile, songs, weights, info):
-        recommendations = ""
+    async def build_recommendations(self, profile, songs, weights, info):
+        recommendations_message = ""
         scores= []
         for song in songs:
-            score = build_song_score(profile, song, weights)
+            score = await recommendations.build_song_score(self, profile, song, weights)
             scores.append((score, song['id']))
         
         scores.sort()
         scores.reverse()
         for song in scores[:5]:
             song_info = info[song[1]]
-            recommendations+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" url: "+song_info['url']+"\n")
+            recommendations_message+=(str(scores.index(song)+1)+". "+song_info['name']+" by "+song_info['artist']+" url: "+song_info['url']+"\n")
         
-        return recommendations
+        return recommendations_message
 
-    async def request_recommendations(ctx):
-        while True:
-            auth_key = open("auth_key.json", "r")
-            auth = json.loads(auth_key.read())
-            expiry_time = auth['expiry_time']
-            access_token = auth['access_token']
-            refresh_token = auth['refresh_token']
-            user = auth['name']
-            headers={"Authorization":"Bearer "+access_token, "Accept": "application/json", "Content-Type": "application/json"}
-            if time.time() < expiry_time:
-                top_artists, top_songs = toptracksinfo()
-                print('user top songs and artists completed', end = " (1/5)\r")
-                related_artists = get_related_artists(top_artists)
-                print(" "*100, end="\r")
-                print('related artists completed', end = " (2/5)\r")
-                top_related, top_rel_info = get_top_tracks(related_artists)
-                print(" "*100, end="\r")
-                print('related songs completed', end = " (3/5)\r")
-                top_analysis = get_tracks_analysis(top_songs)
-                profile, weights = build_user_profile(top_analysis)
-                print(" "*100, end="\r")
-                print('user profile completed', end = " (4/5)\r")
-                rec_analysis = get_tracks_analysis(top_related)
-                recs = get_recommendations(profile, rec_analysis, weights, top_rel_info)
-                print('recommendations completed (5/5)')
-                print(recs)
-                break
-            
-            else:
-                refresh_headers = {'content-type': 'application/x-www-form-urlencoded'}
-                parameters = {'grant_type': 'refresh_token', "refresh_token": refresh_token, 'client_id':client_id, 'client_secret':  client_secret}
-                new_token = requests.post('https://accounts.spotify.com/api/token', data=parameters, headers=refresh_headers)
-                content = json.loads(new_token.text)
-                content['expiry_time'] = time.time()+content['expires_in']
-                content['name'] = user
-                content['refresh_token'] = refresh_token
-                keyfile = open("auth_key.json" ,"w")
-                keyfile.write(json.dumps(content, indent=4))
-                print(new_token)
+    async def get_recommendations(self):
+        await recommendations.get_access(self)
+        message = await self.ctx.send('Getting your top tracks(1/4)')
+        top_artists, top_songs = await recommendations.toptracksinfo(self)
+        await message.edit('Getting related artists(2/4)')
+        related_artists = await recommendations.get_related_artists(self, top_artists)
+        await message.edit('Getting top tracks(3/4)')
+        top_related, top_rel_info = await recommendations.get_top_tracks(self, related_artists)
+        await message.edit('Getting recommendations(4/4)')
+        top_analysis = await recommendations.get_tracks_analysis(self, top_songs)
+        profile, weights = await recommendations.build_user_profile(self, top_analysis)
+        rec_analysis = await recommendations.get_tracks_analysis(self, top_related)
+        recs = await recommendations.build_recommendations(self, profile, rec_analysis, weights, top_rel_info)
+        self.ctx.send(recs)
