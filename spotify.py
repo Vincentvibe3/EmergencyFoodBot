@@ -42,7 +42,7 @@ class register():
     async def register(self):
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute("INSERT INTO users(name, id) VALUES(%s, %s);", (self.username, self.user_id))
+        cur.execute("INSERT INTO users(name, id) VALUES(%(username)s, %(id)s);", {'username':self.username, 'id':self.user_id})
         conn.commit()
         cur.close()
         conn.close()
@@ -56,7 +56,7 @@ class recommendations():
     async def get_access(self):
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE id='{}';".format(self.user_id))
+        cur.execute("SELECT * FROM users WHERE id= %(id)s;", {'id':self.user_id})
         result = cur.fetchone()
         self.expiry_time = result[3]
         self.access_token = result[1]
