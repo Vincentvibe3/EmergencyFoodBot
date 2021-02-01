@@ -149,7 +149,7 @@ def is_bot(ctx):
 
 @bot.command()
 async def purgebots(ctx, limit=None):
-    if ctx.author == bot.get_user(bot.owner_id) or bot:
+    if ctx.author == bot.get_user(321812737812594688) or bot:
         await ctx.channel.purge(limit=limit, check=is_bot, bulk=True)
     else:
         await ctx.send('You do not have the required permissions')
