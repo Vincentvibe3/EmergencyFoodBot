@@ -9,11 +9,11 @@ import asyncio
 #command modules
 import Sauce as s
 import Kana_Practice as kp
-# import spotify
+import spotify
 # import nameroulette
 
 #import token
-TOKEN = os.environ['TOKENBETA']
+TOKEN = os.environ['TOKEN']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix=commandPrefix)
