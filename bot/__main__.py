@@ -1,7 +1,7 @@
 
 def setupbot():
-    from . import db
-    from . import bot
+    import db
+    import bot
     bot.startbot()
 
 setupbot()

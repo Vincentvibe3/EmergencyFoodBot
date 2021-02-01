@@ -7,7 +7,7 @@ import os
 import asyncio
 
 #command modules
-from .modules import Sauce as s, Kana_Practice as kp#, spotify#, nameroulette
+from modules import Sauce as s, Kana_Practice as kp, spotify#, nameroulette
 
 
 #import token
