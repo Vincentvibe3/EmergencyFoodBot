@@ -149,8 +149,6 @@ def is_bot(ctx):
 
 @bot.command()
 async def purgebots(ctx, limit=None):
-    print(ctx.author)
-    print(bot.get_user(321812737812594688))
     if ctx.author == bot.get_user(321812737812594688):
         await ctx.channel.purge(limit=limit, check=is_bot, bulk=True)
     else:
