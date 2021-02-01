@@ -10,6 +10,7 @@ import asyncio
 import Sauce as s
 import Kana_Practice as kp
 import spotify
+import nameroulette
 
 #import token
 TOKEN = os.environ['TOKEN']
@@ -119,6 +120,18 @@ async def spotifyrecs(ctx, username=''):
     else:
         register = spotify.register(ctx, username)
         await register.register() 
+
+@bot.command()
+async def timer(ctx):
+    start = time.time()
+    await asyncio.sleep(10)
+    end = time.time()
+    await ctx.send('timer done, {}s elapsed'.format(end-start))
+    
+
+@bot.command()
+async def startroulette(ctx):
+    await nameroulette.start(ctx)
 
 #testing commands
 @bot.command()
