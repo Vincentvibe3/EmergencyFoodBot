@@ -5,3 +5,4 @@ Testbot.py
 TOKEN.txt
 TOKENBETA.txt
 env/
+build/
