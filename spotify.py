@@ -22,11 +22,13 @@ async def check_membership(ctx):
     cur.execute("SELECT * FROM users WHERE id='{}';".format(user_id))
     result = cur.fetchone()
     if result == None:
+        cur.close()
+        conn.close()
         return False
     else:
+        cur.close()
+        conn.close()
         return True
-    cur.close()
-    conn.close()
 
 class register():
     def __init__(self, ctx, username):
