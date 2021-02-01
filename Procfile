@@ -1,1 +1,1 @@
-worker: python3 EmergencyFood.py
+worker: python3 -m bot

@@ -1,0 +1,9 @@
+README.md
+setup.py
+EmergencyFood.egg-info/PKG-INFO
+EmergencyFood.egg-info/SOURCES.txt
+EmergencyFood.egg-info/dependency_links.txt
+EmergencyFood.egg-info/top_level.txt
+bot/__main__.py
+bot/bot.py
+bot/db.py

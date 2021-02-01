@@ -7,10 +7,8 @@ import os
 import asyncio
 
 #command modules
-import Sauce as s
-import Kana_Practice as kp
-import spotify
-# import nameroulette
+from .modules import Sauce as s, Kana_Practice as kp, spotify#, nameroulette
+
 
 #import token
 TOKEN = os.environ['TOKEN']
@@ -128,6 +126,10 @@ async def timer(ctx):
     end = time.time()
     await ctx.send('timer done, {}s elapsed'.format(end-start))
     
+@bot.command()
+async def roll():
+    await nameroulette.roll(ctx)
+
 
 # @bot.command()
 # async def startroulette(ctx):
@@ -154,4 +156,5 @@ async def purgebots(ctx, limit=None):
     else:
         await ctx.send('You do not have the required permissions')
 
-bot.run(TOKEN)
+def startbot():
+    bot.run(TOKEN)

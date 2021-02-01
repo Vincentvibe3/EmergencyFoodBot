@@ -7,7 +7,20 @@ import asyncio
 
 from datetime import datetime, timedelta, timezone
 
-# DATABASE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
+DATABASE_URL = os.environ['DATABASE_URL']
+
+async def openconnection():
+    conn = psycopg2.connect(DATABASE_URL)
+    return conn
+
+async def getchoices():
+    conn = await openconnection()
+    with conn.cursor() as cur:
+        cur.execute('SELECT * FROM standardrolls')
+        results = cur.fetchall()
+    conn.close()
+    return results
+
 
 async def getNotifyTime(tz):
     timezonecorrect = timedelta(hours=tz)
@@ -18,6 +31,10 @@ async def getNotifyTime(tz):
     notify = nextday.replace(hour=20, minute=0, second=0)-timezonecorrect
     notifyepoch = notify.timestamp()
     return notifyepoch
+
+async def roll():
+    pass
+
 
 async def ping(ctx):
     ctx.send('@nameroulette')
