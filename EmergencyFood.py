@@ -9,11 +9,11 @@ import asyncio
 #command modules
 import Sauce as s
 import Kana_Practice as kp
-import spotify
+# import spotify
 # import nameroulette
 
 #import token
-TOKEN = os.environ['TOKEN']
+TOKEN = os.environ['TOKENBETA']
 #command prefix
 commandPrefix = '$'
 bot = commands.Bot(command_prefix=commandPrefix)
@@ -149,6 +149,8 @@ def is_bot(ctx):
 
 @bot.command()
 async def purgebots(ctx, limit=None):
+    print(ctx.author)
+    print(bot.get_user(321812737812594688))
     if ctx.author == bot.get_user(321812737812594688):
         await ctx.channel.purge(limit=limit, check=is_bot, bulk=True)
     else:
