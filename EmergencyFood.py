@@ -135,7 +135,7 @@ async def startroulette(ctx):
 
 #testing commands
 @bot.command()
-async def testsauce(ctx, testtimes:int, *, tags: typing.Optional[str] = 'English'):
+async def testsauce(ctx, testtimes:int, *, tags: typing.Optional[str] = random.choice('a b c d e f g h i j k l m n o p q r s t u v w x y z'.split())):
     if ctx.author == bot.get_user(321812737812594688):
         for i in range(testtimes):
             print(i)
