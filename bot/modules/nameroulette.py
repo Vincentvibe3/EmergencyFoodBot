@@ -15,6 +15,19 @@ async def getchoices(conn, cur):
     results = cur.fetchall()
     return results
 
+@db.connect(database='nameroulette')
+async def getDeathrolls(conn, cur):
+    cur.execute('SELECT * FROM deathrolls')
+    results = cur.fetchall()
+    return results
+
+async def setDeathRole():
+    deathrolls = await getDeathrolls()
+    deathroll = random.choice(deathrolls)[0]
+    return deathroll
+
+
+
 async def getNotifyTime(tz):
     timezonecorrect = timedelta(hours=tz)
     now = datetime.now(timezone.utc)
@@ -39,7 +52,7 @@ async def start(ctx):
         waittime = nexttime-now
         await asyncio.sleep(waittime)
         users = await getUsers(ctx)
-        await setDeathRole()
+        deathroll = await setDeathRole()
         await ping(ctx, users)
         await clearuserstate()
 
@@ -77,20 +90,12 @@ async def getUsers(ctx):
         for role in member.roles:
             if role.name == 'Name Roulette':
                 participants.append(member)
+                print(member)
             else:
                 continue
 
-async def setDeathRole():
-    #connect database
-    pass
+    return participants
 
-async def setChoices(choices):
-    #connect database
-    pass
-
-async def signup():
-    #database
-    pass
 
 async def checkchoicesgiven():
     #databse
@@ -100,9 +105,6 @@ async def clearallchoices():
     #database
     pass
 
-async def unregister():
-    #database
-    pass
 
 async def checkselection():
     #reactions

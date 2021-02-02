@@ -152,7 +152,8 @@ def startbot(bot, TOKEN):
 
     @bot.command()
     async def roulette(ctx):
-        await nameroulette.getchoices()
+        users = await nameroulette.getUsers(ctx)
+        await ctx.send(users)
 
     # @bot.command()
     # async def startroulette(ctx):
