@@ -1,23 +1,23 @@
 import json
 import time
-import os
-import psycopg2
 import random
 import math
+import os
+
+import psycopg2
 import urllib.parse
 import aiohttp
-import asyncio
 import discord
-from discord.ext import commands
 
-DATABASE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
+DATABASE_URL = '' #set in bot.py
+SSLMODE = 'require'
 
-client_id = os.environ['CLIENT_ID']
-client_secret = os.environ['CLIENT_SECRET']
+CLIENT_ID = ''
+CLIENT_SECRET = ''
 
 async def check_membership(ctx):
     user_id = str(ctx.author.id)
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    conn = psycopg2.connect(DATABASE_URL, sslmode=SSLMODE)
     cur = conn.cursor()
     cur.execute("SELECT * FROM users WHERE id='{}';".format(user_id))
     result = cur.fetchone()
@@ -37,12 +37,12 @@ class register():
         self.ctx = ctx
         uri = 'https://spotify--recommendations.herokuapp.com/Recommendations/callback'
         scope = 'user-follow-read user-top-read user-library-read user-read-private'
-        parameters = {'client_id': client_id, 'response_type': 'code', 'redirect_uri': uri, 'scope': scope}
+        parameters = {'client_id': CLIENT_ID, 'response_type': 'code', 'redirect_uri': uri, 'scope': scope}
         base_url = 'https://accounts.spotify.com/authorize?'
         self.url = base_url+urllib.parse.urlencode(parameters)
 
     async def register(self):
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        conn = psycopg2.connect(DATABASE_URL, sslmode=SSLMODE)
         cur = conn.cursor()
         cur.execute("INSERT INTO users(name, id) VALUES(%(username)s, %(id)s);", {'username':self.username, 'id':self.user_id})
         conn.commit()
@@ -56,7 +56,7 @@ class recommendations():
         self.ctx = ctx
 
     async def get_access(self):
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        conn = psycopg2.connect(DATABASE_URL, sslmode=SSLMODE)
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE id= %(id)s;", {'id':self.user_id})
         result = cur.fetchone()
@@ -65,7 +65,7 @@ class recommendations():
         self.refresh_token = result[2]
         if self.expiry_time < time.time():
             refresh_headers = {'content-type': 'application/x-www-form-urlencoded'}
-            refresh_parameters = {'grant_type': 'refresh_token', "refresh_token": self.refresh_token, 'client_id':client_id, 'client_secret':  client_secret}
+            refresh_parameters = {'grant_type': 'refresh_token', "refresh_token": self.refresh_token, 'client_id':CLIENT_ID, 'client_secret':  CLIENT_SECRET}
             async with aiohttp.ClientSession() as session:
                 async with session.post('https://accounts.spotify.com/api/token', data=refresh_parameters, headers=refresh_headers) as new_token:
                     json_data = await new_token.text()

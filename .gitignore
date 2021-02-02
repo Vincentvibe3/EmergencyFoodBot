@@ -5,4 +5,5 @@ Testbot.py
 TOKEN.txt
 TOKENBETA.txt
 env/
-build/
+untracked/
+localconfig.json

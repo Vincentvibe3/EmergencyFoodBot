@@ -1,7 +1,9 @@
+from bot import createbot, startbot
+import db
 
 def setupbot():
-    import db
-    import bot
-    bot.startbot()
+    # db.createDB(local=False)
+    bot, TOKEN = createbot(local=False)
+    startbot(bot, TOKEN)
 
 setupbot()

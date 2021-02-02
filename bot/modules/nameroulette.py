@@ -2,12 +2,11 @@ import time
 import psycopg2
 import random
 import math
-import os
 import asyncio
 
 from datetime import datetime, timedelta, timezone
 
-DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = ''
 
 async def openconnection():
     conn = psycopg2.connect(DATABASE_URL)
