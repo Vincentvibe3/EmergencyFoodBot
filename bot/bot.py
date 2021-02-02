@@ -28,9 +28,10 @@ def createbot(local=False):
         commandPrefix = "$beta"
         TOKEN = os.environ['TOKENBETA']
     else:
-        spotify.DATABSE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
+        spotify.DATABASE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
         spotify.CLIENT_SECRET = os.environ['CLIENT_SECRET']
         spotify.CLIENT_ID = os.environ['CLIENT_ID']
+        spotify.SSLMODE = 'require'
         nameroulette.DATABASE_URL = os.environ['DATABASE_URL']
         commandPrefix = "$"
         TOKEN = os.environ['TOKEN']
