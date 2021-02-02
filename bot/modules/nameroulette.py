@@ -8,7 +8,6 @@ from datetime import datetime, timedelta, timezone
 from modules import db
 
 DATABASE_URL = ''
-db.setup(local=True)
 
 @db.connect(database='nameroulette')
 async def getchoices(conn, cur):
