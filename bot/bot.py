@@ -13,8 +13,6 @@ from modules import Sauce as s, Kana_Practice as kp, spotify, nameroulette
 
 
 
-description = '''$'''
-
 def createbot(local=False):
     if local:
         with open('localconfig.json', 'r') as configfile:
@@ -35,8 +33,9 @@ def createbot(local=False):
         nameroulette.DATABASE_URL = os.environ['DATABASE_URL']
         commandPrefix = "$"
         TOKEN = os.environ['TOKEN']
-
+        
     bot = commands.Bot(command_prefix=commandPrefix)
+    description = '''$'''
     return bot, TOKEN
 
 def startbot(bot, TOKEN):

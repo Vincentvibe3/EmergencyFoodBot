@@ -16,8 +16,6 @@ CLIENT_ID = ''
 CLIENT_SECRET = ''
 
 async def check_membership(ctx):
-    print(DATABASE_URL)
-    print(SSLMODE)
     user_id = str(ctx.author.id)
     conn = psycopg2.connect(DATABASE_URL, sslmode=SSLMODE)
     cur = conn.cursor()
