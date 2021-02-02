@@ -4,10 +4,10 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 CREATE TABLE IF NOT EXISTS deathrolls(
-    name PRIMARY KEY,
+    name TEXT PRIMARY KEY
 );
 
 CREATE TABLE IF NOT EXISTS standardrolls(
-    name PRIMARY KEY,
+    name TEXT PRIMARY KEY
 );
 

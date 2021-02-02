@@ -11,8 +11,6 @@ from discord.ext import commands
 #command modules
 from modules import Sauce as s, Kana_Practice as kp, spotify, nameroulette
 
-
-
 def createbot(local=False):
     if local:
         with open('localconfig.json', 'r') as configfile:
@@ -149,9 +147,12 @@ def startbot(bot, TOKEN):
         await ctx.send('timer done, {}s elapsed'.format(end-start))
         
     @bot.command()
-    async def roll():
+    async def roll(ctx):
         await nameroulette.roll(ctx)
 
+    @bot.command()
+    async def roulette(ctx):
+        await nameroulette.getchoices()
 
     # @bot.command()
     # async def startroulette(ctx):
