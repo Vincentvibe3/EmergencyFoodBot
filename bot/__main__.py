@@ -4,7 +4,7 @@ from bot import createbot, startbot
 from modules import db
 
 def setupbot():
-    local = True
+    local = False
     print('Setting up databases...')
     db.setup(local=local)
     db.createTABLES()
