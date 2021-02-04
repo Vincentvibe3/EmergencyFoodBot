@@ -162,6 +162,9 @@ def startbot(bot, TOKEN):
     async def register(ctx):
         await name_roulette.registerserver(ctx)
 
+    @nameroulette.command()
+    async def user(ctx):
+        await name_roulette.registeruser(ctx.author.id ,ctx.guild.id)
     # @nameroulette.command()
     # async def startroulette(ctx):
     #     await nameroulette.start(ctx)

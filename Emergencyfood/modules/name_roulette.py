@@ -2,8 +2,10 @@ import time
 import random
 import math
 import asyncio
+import json
 from datetime import datetime, timedelta, timezone
-from psycopg2 import sql
+
+from psycopg2 import sql, extensions, extras
 
 from Emergencyfood import db
 
@@ -57,11 +59,39 @@ async def writeuserstate(conn, cur, user, roll):
     conn.commit()
 
 @db.connect(database='nameroulette')
-async def registeruser(conn, cur, user):
-    user_id = sql.Literal(user)
-    query = sql.SQL("INSERT INTO users VALUES({id}, 0)").format(id=user_id,)
+async def registeruser(conn, cur, user, server):
+    server_id = sql.Literal(str(server))
+    getUsers = sql.SQL("SELECT users FROM servers WHERE id={server}").format(server=server_id)
+    cur.execute(getUsers)
+    users = cur.fetchone()
+    if users[0] is None:
+        userdict = {}
+        userdict[user] = {}
+    else:
+        userdict = json.loads(users[0])
+        userdict[user] = {"rolls":0, "deathroll":False},
+    
+    userjson = sql.Literal(json.dumps(userdict))
+    query = sql.SQL("UPDATE servers SET users={users} WHERE id={server}").format(users=userjson, server=server_id,)
     cur.execute(query)
     conn.commit()
+
+@db.connect(database='nameroulette')
+async def unregisteruser(conn, cur, user, server):
+    server_id = sql.Literal(str(server))
+    getUsers = sql.SQL("SELECT users FROM servers WHERE id={server}").format(server=server_id)
+    cur.execute(getUsers)
+    users = cur.fetchone()
+    try:
+        userdict = json.loads(users[0])
+        del userdict[user]
+    except Exception:
+        print('User was not registered')
+    userjson = sql.Literal(json.dumps(userdict))
+    query = sql.SQL("UPDATE servers SET users={users} WHERE id={server}").format(users=userjson, server=server_id,)
+    cur.execute(query)
+    conn.commit()
+
 
 @db.connect(database='nameroulette')
 async def checkserver(conn, cur, server_id):

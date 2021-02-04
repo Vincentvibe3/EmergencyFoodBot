@@ -3,7 +3,7 @@ from .bot import createbot, startbot
 from . import db
 
 def setupbot():
-    local = False
+    local = True
     print('Setting up databases...')
     db.setup(local=local)
     db.createnameroulette()
