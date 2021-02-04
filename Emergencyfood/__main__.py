@@ -1,15 +1,16 @@
-import asyncio
 
-from bot import createbot, startbot
-from modules import db
+from .bot import createbot, startbot
+from . import db
 
 def setupbot():
     local = False
     print('Setting up databases...')
     db.setup(local=local)
-    db.createTABLES()
-    print('starting bot...')
+    db.createnameroulette()
+    db.createspotify()
+    print('Creating bot instance...')
     bot, TOKEN = createbot(local=local)
+    print('Starting bot...\n')
     startbot(bot, TOKEN)
 
 setupbot()

@@ -1,10 +1,8 @@
-import discord
-from discord.ext import commands
 import time
 import random
+
+import discord
 import aiohttp
-import asyncio
-import json
 
 async def search(query):
     """searches nhentai with the specified search query"""

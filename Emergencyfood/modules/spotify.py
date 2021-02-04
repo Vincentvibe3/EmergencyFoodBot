@@ -2,7 +2,6 @@ import json
 import time
 import random
 import math
-import os
 
 import psycopg2
 import urllib.parse
@@ -14,6 +13,8 @@ SSLMODE = ''
 
 CLIENT_ID = ''
 CLIENT_SECRET = ''
+
+from Emergencyfood import db
 
 async def check_membership(ctx):
     user_id = str(ctx.author.id)

@@ -1,6 +1,4 @@
 import random
-import time
-import sys
 
 #sounds
 baseSounds = {'hiragana':'あ い う え お'.split(), 'katakana':'ア イ ウ エ オ'.split(), 'answers':'a i u e o'.split()}

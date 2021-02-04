@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 
 #command modules
-from modules import Sauce as s, Kana_Practice as kp, spotify, nameroulette
+from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette
 
 def createbot(local=False):
     if local:
@@ -19,7 +19,6 @@ def createbot(local=False):
             spotify.SSLMODE = 'disable'
             spotify.CLIENT_SECRET = config['spotify']['client_secret']
             spotify.CLIENT_ID = config['spotify']['client_id']
-            nameroulette.DATABASE_URL = config['nameroulette']['database']
         
         commandPrefix = "$beta"
         TOKEN = os.environ['TOKENBETA']
@@ -28,11 +27,12 @@ def createbot(local=False):
         spotify.CLIENT_SECRET = os.environ['CLIENT_SECRET']
         spotify.CLIENT_ID = os.environ['CLIENT_ID']
         spotify.SSLMODE = 'require'
-        nameroulette.DATABASE_URL = os.environ['DATABASE_URL']
         commandPrefix = "$"
         TOKEN = os.environ['TOKEN']
-        
-    bot = commands.Bot(command_prefix=commandPrefix)
+
+    intents = discord.Intents().default()
+    intents.members = True
+    bot = commands.Bot(command_prefix=commandPrefix, intents=intents)
     description = '''$'''
     return bot, TOKEN
 
@@ -47,12 +47,17 @@ def startbot(bot, TOKEN):
             print(" -"+str(guilds))
 
     #commands
-    @bot.command()
+    @bot.command(help='says what you want it to', usage='message')
     async def say(ctx, *, arg):
         await ctx.send(arg)
 
-    @bot.command()
-    async def sauce(ctx, *, tags: typing.Optional[str] = random.choice('a b c d e f g h i j k l m n o p q r s t u v w x y z'.split())):
+    @bot.group(aliases=['s'], help='sauce related commands')
+    async def sauce(ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Please use a valid subcommand')
+
+    @sauce.command(help='returns a random sauce', usage='can be followed by optional tags to refine search')
+    async def randomsauce(ctx, *, tags: typing.Optional[str] = random.choice('a b c d e f g h i j k l m n o p q r s t u v w x y z'.split())):
         noRestriction = True
         if ctx.guild.name == "The Squad":
             authorRoles = []
@@ -71,8 +76,8 @@ def startbot(bot, TOKEN):
             else: 
                 await ctx.send('This command can only be used in NSFW channels')
 
-    @bot.command(aliases = ['rs'])
-    async def readsauce(ctx, id, *, i: typing.Optional[int]=1):
+    @sauce.command(help='read a sauce', usage='number optional: starting page')
+    async def read(ctx, id, *, i: typing.Optional[int]=1):
         if ctx.channel.is_nsfw():
             noRestriction = True
             if ctx.guild.name == "The Squad":
@@ -97,7 +102,7 @@ def startbot(bot, TOKEN):
         else: 
             await ctx.send('This command can only be used in NSFW channels')
 
-    @bot.command(aliases = ['pk'])
+    @bot.command(aliases = ['pk'], help='practice your kana', usage='mode(hiragana|katakana)')
     async def practicekana(ctx, mode=''):
         if mode.lower() in ['hiragana', 'katakana']:
             questionContent, answer = await kp.getQuestion(mode)
@@ -123,7 +128,7 @@ def startbot(bot, TOKEN):
         else:
             await ctx.send('Please enter a valid mode(hiragana or katakana)')
 
-    @bot.command(aliases = ['sp'])
+    @bot.command(aliases = ['sp'], help='get song recommendations', usage='optional: spotify username(if not registered)')
     async def spotifyrecs(ctx, username=''):
         check = await spotify.check_membership(ctx)
         if check and username == '':
@@ -139,28 +144,34 @@ def startbot(bot, TOKEN):
             register = spotify.register(ctx, username)
             await register.register() 
 
-    @bot.command()
-    async def timer(ctx):
-        start = time.time()
-        await asyncio.sleep(10)
-        end = time.time()
-        await ctx.send('timer done, {}s elapsed'.format(end-start))
+    @bot.group(hidden=True)
+    async def nameroulette(ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Please use a valid subcommand')
         
-    @bot.command()
+    @nameroulette.command()
     async def roll(ctx):
-        await nameroulette.roll(ctx)
+        await name_roulette.writeuser("';DROP TABLE users; --")
+        await name_roulette.writeuserstate("';DROP TABLE users; --", "abc")
 
-    @bot.command()
+    @nameroulette.command()
     async def roulette(ctx):
-        users = await nameroulette.getUsers(ctx)
-        await ctx.send(users)
+        await name_roulette.checkserver(ctx.guild.id)
 
-    # @bot.command()
+    @nameroulette.command()
+    async def register(ctx):
+        await name_roulette.registerserver(ctx)
+
+    # @nameroulette.command()
     # async def startroulette(ctx):
     #     await nameroulette.start(ctx)
 
+    @bot.group(hidden=True)
+    async def admin(ctx):
+        pass
+
     #testing commands
-    @bot.command()
+    @admin.command()
     async def testsauce(ctx, testtimes:int, *, tags: typing.Optional[str] = random.choice('a b c d e f g h i j k l m n o p q r s t u v w x y z'.split())):
         if ctx.author == bot.get_user(321812737812594688):
             for i in range(testtimes):
@@ -173,7 +184,7 @@ def startbot(bot, TOKEN):
     def is_bot(ctx):
         return ctx.author == bot.get_user(774017121243365384) or ctx.author == bot.get_user(772251680103464970) or ctx.author == bot.get_user(772256300389236767)
 
-    @bot.command()
+    @admin.command()
     async def purgebots(ctx, limit=None):
         if ctx.author == bot.get_user(321812737812594688):
             await ctx.channel.purge(limit=limit, check=is_bot, bulk=True)
