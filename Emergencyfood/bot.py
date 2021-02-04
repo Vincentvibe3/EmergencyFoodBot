@@ -56,7 +56,7 @@ def startbot(bot, TOKEN):
         if ctx.invoked_subcommand is None:
             await ctx.send('Please use a valid subcommand')
 
-    @sauce.command(help='returns a random sauce', usage='can be followed by optional tags to refine search')
+    @sauce.command(help='returns a random sauce', usage='optional: tags to refine search')
     async def randomsauce(ctx, *, tags: typing.Optional[str] = random.choice('a b c d e f g h i j k l m n o p q r s t u v w x y z'.split())):
         noRestriction = True
         if ctx.guild.name == "The Squad":
