@@ -10,7 +10,7 @@ from discord import channel
 from discord.ext import commands
 
 #command modules
-from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette
+from .modules import Sauce as s, Kana_Practice as kp, spotify, nr as nr
 
 def createbot(local=False, beta=False):
     if local:
@@ -159,37 +159,37 @@ def startbot(bot, TOKEN):
         
     # @nameroulette.command()
     # async def roll(ctx):
-    #     await name_roulette.writeuser("';DROP TABLE users; --")
-    #     await name_roulette.writeuserstate("';DROP TABLE users; --", "abc")
+    #     await nr.writeuser("';DROP TABLE users; --")
+    #     await nr.writeuserstate("';DROP TABLE users; --", "abc")
 
     @nameroulette.command()
     async def roulette(ctx):
-        await name_roulette.checkserver(ctx.guild.id)
+        await nr.checkserver(ctx.guild.id)
 
     @nameroulette.command()
     async def register(ctx):
-        await name_roulette.registerserver(ctx)
+        await nr.registerserver(ctx)
 
     @nameroulette.command()
     async def user(ctx):
-        await name_roulette.registeruser(ctx)
+        await nr.registeruser(ctx)
 
     @nameroulette.command()
     async def unregister(ctx):
-        await name_roulette.unregisteruser(ctx)
+        await nr.unregisteruser(ctx)
     
     @nameroulette.command()
     async def ping(ctx):
-        await name_roulette.ping(ctx)
+        await nr.ping(ctx)
 
     @nameroulette.command()
     async def reroll(ctx):
-        await name_roulette.reroll(ctx)
+        await nr.reroll(ctx)
 
 
     @nameroulette.command()
     async def startroulette(ctx):
-        await nameroulette.start(ctx)
+        await nr.start(ctx)
 
     @bot.group(hidden=True)
     async def admin(ctx):
