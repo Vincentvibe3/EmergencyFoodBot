@@ -10,7 +10,7 @@ from discord import channel
 from discord.ext import commands
 
 #command modules
-from .modules import Sauce as s, Kana_Practice as kp, spotify, nr as nr
+from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette as nr
 
 def createbot(local=False, beta=False):
     if local:
