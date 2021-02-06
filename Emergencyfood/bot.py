@@ -180,9 +180,9 @@ def startbot(bot, TOKEN):
         await name_roulette.reroll(ctx)
 
 
-    # @nameroulette.command()
-    # async def startroulette(ctx):
-    #     await nameroulette.start(ctx)
+    @nameroulette.command()
+    async def startroulette(ctx):
+        await nameroulette.start(ctx)
 
     @bot.group(hidden=True)
     async def admin(ctx):
