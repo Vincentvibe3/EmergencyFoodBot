@@ -1,4 +1,4 @@
 git+https://github.com/Rapptz/discord.py
 aiohttp==3.6.3
-discord.py>=1.5.1
+discord.py>=1.6.0
 psycopg2==2.8.6

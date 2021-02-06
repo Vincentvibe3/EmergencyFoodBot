@@ -30,7 +30,8 @@ def connect(database):
         async def wrapper(*args, **kwargs):
             conn = psycopg2.connect(DATABASES[database], sslmode=SSLMODE)
             with conn.cursor() as cur:
-                result = await function(conn, cur, *args, **kwargs)
+                result = await function(cur, *args, **kwargs)
+                conn.commit()
             conn.close()
             return result
         return wrapper
@@ -41,23 +42,24 @@ def syncconnect(database):
         def wrapper(*args, **kwargs):
             conn = psycopg2.connect(DATABASES[database], sslmode=SSLMODE)
             with conn.cursor() as cur:
-                result = function(conn, cur, *args, **kwargs)
+                result = function(cur, *args, **kwargs)
+                conn.commit()
             conn.close()
             return result
         return wrapper
     return decorator
 
 @syncconnect(database='nameroulette')
-def createnameroulette(conn, cur):
+def createnameroulette(cur):
     schemaPath = os.path.join(SQL_PATH, 'nameroulette.sql')
     with open(schemaPath) as schema:
         cur.execute(schema.read())
-        conn.commit()
+        
 
 @syncconnect(database='spotify')
-def createspotify(conn, cur):
+def createspotify(cur):
     schemaPath = os.path.join(SQL_PATH, 'spotify.sql')
     with open(schemaPath) as schema:
         cur.execute(schema.read())
-        conn.commit()
+        
 

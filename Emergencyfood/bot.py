@@ -2,10 +2,11 @@ import random
 import typing
 import time
 import os
-import asyncio
+
 import json
 
 import discord
+from discord import channel
 from discord.ext import commands
 
 #command modules
@@ -149,10 +150,10 @@ def startbot(bot, TOKEN):
         if ctx.invoked_subcommand is None:
             await ctx.send('Please use a valid subcommand')
         
-    @nameroulette.command()
-    async def roll(ctx):
-        await name_roulette.writeuser("';DROP TABLE users; --")
-        await name_roulette.writeuserstate("';DROP TABLE users; --", "abc")
+    # @nameroulette.command()
+    # async def roll(ctx):
+    #     await name_roulette.writeuser("';DROP TABLE users; --")
+    #     await name_roulette.writeuserstate("';DROP TABLE users; --", "abc")
 
     @nameroulette.command()
     async def roulette(ctx):
@@ -164,7 +165,21 @@ def startbot(bot, TOKEN):
 
     @nameroulette.command()
     async def user(ctx):
-        await name_roulette.registeruser(ctx.author.id ,ctx.guild.id)
+        await name_roulette.registeruser(ctx)
+
+    @nameroulette.command()
+    async def unregister(ctx):
+        await name_roulette.unregisteruser(ctx)
+    
+    @nameroulette.command()
+    async def ping(ctx):
+        await name_roulette.ping(ctx)
+
+    @nameroulette.command()
+    async def reroll(ctx):
+        await name_roulette.reroll(ctx)
+
+
     # @nameroulette.command()
     # async def startroulette(ctx):
     #     await nameroulette.start(ctx)

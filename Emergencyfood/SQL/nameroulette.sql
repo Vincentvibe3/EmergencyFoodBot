@@ -1,7 +1,9 @@
 
 CREATE TABLE IF NOT EXISTS servers(
     id TEXT PRIMARY KEY,
-    users TEXT,
-    deathrolls TEXT,
-    standardrolls TEXT
+    users JSON,
+    deathrolls JSON,
+    standardrolls JSON,
+    message TEXT,
+    channel TEXT
 )
