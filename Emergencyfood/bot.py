@@ -12,7 +12,7 @@ from discord.ext import commands
 #command modules
 from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette
 
-def createbot(local=False):
+def createbot(local=False, beta=False):
     if local:
         with open('localconfig.json', 'r') as configfile:
             config = json.loads(configfile.read())
@@ -23,6 +23,13 @@ def createbot(local=False):
         
         commandPrefix = "$beta"
         TOKEN = os.environ['TOKENBETA']
+    elif beta:
+        spotify.DATABASE_URL = os.environ['HEROKU_POSTGRESQL_CHARCOAL_URL']
+        spotify.CLIENT_SECRET = os.environ['CLIENT_SECRET']
+        spotify.CLIENT_ID = os.environ['CLIENT_ID']
+        spotify.SSLMODE = 'require'
+        commandPrefix = "$beta"
+        TOKEN = os.environ['TOKEN']
     else:
         spotify.DATABASE_URL = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
         spotify.CLIENT_SECRET = os.environ['CLIENT_SECRET']

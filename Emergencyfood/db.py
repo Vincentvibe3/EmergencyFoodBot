@@ -10,7 +10,7 @@ WORKSPACE_PATH = os.path.dirname(os.path.realpath(__file__))
 SQL_PATH = os.path.join(WORKSPACE_PATH, 'SQL')
 print(os.getcwd())
 
-def setup(local=False):
+def setup(local=False, beta=False):
     global SSLMODE
     if local:
         projectpath = os.path.dirname(WORKSPACE_PATH)
@@ -20,6 +20,10 @@ def setup(local=False):
             DATABASES['spotify'] = config['spotify']['database']
             DATABASES['nameroulette'] = config['nameroulette']['database']
             SSLMODE = 'disable'
+    elif beta:
+        DATABASES['spotify'] = os.environ['HEROKU_POSTGRESQL_CHARCOAL_URL']
+        DATABASES['nameroulette'] = os.environ['DATABASE_URL']
+        SSLMODE = 'require'
     else:
         DATABASES['spotify'] = os.environ['HEROKU_POSTGRESQL_PURPLE_URL']
         DATABASES['nameroulette'] = os.environ['DATABASE_URL']
