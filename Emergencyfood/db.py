@@ -1,14 +1,12 @@
-from Emergencyfood.modules.spotify import SSLMODE
+
 import os
 import json
 
 import psycopg2
-from psycopg2 import sql
 
 DATABASES = {}
 WORKSPACE_PATH = os.path.dirname(os.path.realpath(__file__))
 SQL_PATH = os.path.join(WORKSPACE_PATH, 'SQL')
-print(os.getcwd())
 
 def setup(local=False, beta=False):
     global SSLMODE

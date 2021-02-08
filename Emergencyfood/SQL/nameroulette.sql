@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS servers(
     standardrolls JSON,
     message TEXT,
     channel TEXT
-)
+);
