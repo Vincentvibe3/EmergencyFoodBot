@@ -1,3 +1,4 @@
+from Emergencyfood.db import connect
 import time
 import random
 import asyncio
@@ -12,7 +13,6 @@ if __package__ == 'Emergencyfood.modules':
     
     @db.connect(database='nameroulette')
     async def getrollcount(cur, user:sql.Literal):
-        """The given user is a sql literal formed by psycopg2"""
         query = sql.SQL("SELECT rolls FROM users WHERE id={user_id}").format(user_id = user,)
         cur.execute(query)
         rollcount = cur.fetchone()
@@ -43,17 +43,19 @@ if __package__ == 'Emergencyfood.modules':
             check = await checkuser(user, server_id)
             if not check:
                 userdict = await getUsers(server_id)      
-                userdict[user] = {"name": ctx.author.name, "rolls":0, "deathroll":False}
-                print(userdict)
+                userdict[user] = {"name": ctx.author.name, "rolls":0, "deathroll":False, "add": 3, "adddeath": 2}
                 userjson = sql.Literal(json.dumps(userdict))
                 query = sql.SQL("UPDATE servers SET users={users} WHERE id={server}").format(users=userjson, server=server_id,)
                 cur.execute(query)
                 
-                await ctx.send('Registered')
+                message = 'Registered'
             else:
-                await ctx.send('You are already registered')
+                message = 'You are already registered'
         else:
-            await ctx.send('The server is not participating in a name roulette')
+            message = 'The server is not participating in a name roulette'
+
+        resp = await ctx.send(message)
+        await resp.delete(delay=3)
 
     @db.connect(database='nameroulette')
     async def unregisteruser(cur, ctx):
@@ -68,11 +70,14 @@ if __package__ == 'Emergencyfood.modules':
                 userjson = sql.Literal(json.dumps(userdict))
                 query = sql.SQL("UPDATE servers SET users={users} WHERE id={server}").format(users=userjson, server=server_id,)
                 cur.execute(query)
-                await ctx.send('Unregistered')
+                message = 'Unregistered'
             else:
-                await ctx.send("You can't unregister if you are not registered")
+                message = "You can't unregister if you are not registered"
         else:
-            await ctx.send('The server is not participating in a name roulette')
+            message = 'The server is not participating in a name roulette'
+        
+        resp = await ctx.send(message)
+        await resp.delete(delay=3)
 
     @db.connect(database='nameroulette')
     async def registerserver(cur, ctx):
@@ -96,9 +101,8 @@ if __package__ == 'Emergencyfood.modules':
         return participants
 
     async def getroll(ctx, rollnum:int, choices:list):
-        chances = [1, 2.5, 5]
+        chances = [100, 2.5, 5]
         if not choices:
-            await ctx.send('No possible rolls were found')
             return None
         else:
             death = random.randint(0, 99)
@@ -113,6 +117,9 @@ if __package__ == 'Emergencyfood.modules':
         query = sql.SQL("SELECT standardrolls FROM servers WHERE id={server}").format(server=server)
         cur.execute(query)
         results = cur.fetchone()
+        if results[0] == None:
+            results = []
+            return results
         return results[0]
 
     @db.connect(database='nameroulette')
@@ -120,6 +127,9 @@ if __package__ == 'Emergencyfood.modules':
         query = sql.SQL("SELECT deathrolls FROM servers WHERE id={server}").format(server=server)
         cur.execute(query)
         results = cur.fetchone()
+        if results[0] == None:
+            results = []
+            return results
         return results[0]
 
     async def setDeathRoll(server:sql.Literal):
@@ -149,21 +159,34 @@ if __package__ == 'Emergencyfood.modules':
             message = await partmessage.fetch()
             return message
         else:
-            await ctx.send('server is not registered')
+            resp = await ctx.send('server is not registered')
+            await resp.delete(delay=3)
 
     async def reroll(ctx):
         user = str(ctx.author.id)
         server = sql.Literal(str(ctx.guild.id))
         users = await getUsers(server)
         userproperties = users[user]
-        if userproperties['rolls'] < 3:
+        ok = False
+        if userproperties['deathroll']:
+            response = 'You cannot reroll because of the deathroll'
+        elif userproperties['rolls'] < 3:
+            choices = await getchoices(server)
+            roll = await getroll(ctx, userproperties['rolls'], choices)
             message = await getmessage(ctx)
-            newmessage = await updatemessage(message, ctx.author.name, 'hello')
+            newmessage = await updatemessage(message, ctx.author.name, roll)
             await message.edit(content=newmessage)
             userproperties['rolls'] += 1
+            if roll == 'Deathroll':
+                userproperties['deathroll'] = True
             await updateusers(server, users)
+            ok = True
         else:
-            await ctx.send('You dont have any rolls left')
+            response = 'You dont have any rolls left'
+        
+        if not ok:
+            resp_mess = await ctx.send(response)
+            await resp_mess.delete(delay=3)
 
     @db.connect(database='nameroulette')
     async def updateusers(cur, server:sql.Literal, users:dict):
@@ -176,7 +199,10 @@ if __package__ == 'Emergencyfood.modules':
         toParse = message.content.split('\n')
         for user in toParse[1:]:
             if username in user:
-                toParse.append(f'{toParse[toParse.index(user)]}, {newrole}')
+                if newrole == 'Deathroll':
+                    toParse.append(f'{username}: {newrole}')
+                else:
+                    toParse.append(f'{toParse[toParse.index(user)]}, {newrole}')
                 del toParse[toParse.index(user)]
         for entry in toParse:
             newmessage = f'{newmessage}{entry}\n'
@@ -187,12 +213,12 @@ if __package__ == 'Emergencyfood.modules':
         deathroll = await setDeathRoll(server)
         choices = await getchoices(server)
         if deathroll == None:
-            await ctx.send('No deathroles were set')
+            await ctx.send('No deathrolls were set')
         elif choices == None:
-            await ctx.send('No roles were set')
+            await ctx.send('No rolls were set')
         else:
             pingrole = discord.utils.get(ctx.guild.roles, name='Name Roulette')
-            await ctx.send(pingrole.mention)
+            await ctx.send('------------\n'+pingrole.mention)
             users = await getUsers(server)
             message = '***This weeks deathroll is {}***\n'.format(deathroll)
             for user in users:
@@ -216,11 +242,100 @@ if __package__ == 'Emergencyfood.modules':
         notifyepoch = notify.timestamp()
         return notifyepoch
 
+    @db.connect(database='nameroulette')
+    async def registerChoices(cur, choices, ctx):
+        server = sql.Literal(str(ctx.guild.id))
+        user = str(ctx.author.id)
+        users = await getUsers(server)
+        addleft = users[user]['add']
+        allchoices = await getchoices(server)
+        redundant = []
+        addcount = 0
+        if addleft > 0:
+            for choice in choices[:addleft]:
+                if choice not in allchoices:
+                    addcount+=1
+                    allchoices.append(choice)
+                else:
+                    redundant.append(choice)
+            
+            if redundant:
+                message = ''
+                for entry in redundant:
+                    message = f'{message}, {entry}'
+                resp = await ctx.send(f'{message[1:]} was/were already in the rolls')
+                await resp.delete(delay=3)
+
+            users[user]['add'] = addleft-addcount
+            await updateusers(server, users)
+
+            jsonchoices = sql.Literal(json.dumps(allchoices))
+            query = sql.SQL("UPDATE servers SET standardrolls={choices} WHERE id={server}").format(choices=jsonchoices, server=server)
+            cur.execute(query)
+        else:
+            resp = await ctx.send('You do not have any entries left')
+            await resp.delete(delay=3)
+
+    @db.connect(database='nameroulette')
+    async def registerDeathroll(cur, choices, ctx):
+        server = sql.Literal(str(ctx.guild.id))
+        user = str(ctx.author.id)
+        users = await getUsers(server)
+        addleft = users[user]['adddeath']
+        allchoices = await getDeathrolls(server)
+        redundant = []
+        addcount = 0
+        if addleft > 0:
+            for choice in choices[:addleft]:
+                if choice not in allchoices:
+                    addcount+=1
+                    allchoices.append(choice)
+                else:
+                    redundant.append(choice)
+            
+            if redundant:
+                message = ''
+                for entry in redundant:
+                    message = f'{message}, {entry}'
+                resp = await ctx.send(f'{message[1:]} was/were already in the deathrolls')
+                await resp.delete(delay=3)
+                
+            users[user]['adddeath'] = addleft-addcount
+            await updateusers(server, users)
+
+            jsonchoices = sql.Literal(json.dumps(allchoices))
+            query = sql.SQL("UPDATE servers SET deathrolls={choices} WHERE id={server}").format(choices=jsonchoices, server=server)
+            cur.execute(query)
+        else:
+            resp = await ctx.send('You do not have any entries left')
+            await resp.delete(delay=3)
+
+    @db.connect(database='nameroulette')
+    async def reset(cur, ctx):
+        server = sql.Literal(str(ctx.guild.id))
+        users = await getUsers(server)
+        for user in users:
+            users[user]['rolls'] = 0
+            users[user]['deathroll'] = False
+        await updateusers(server, users)
+
+    @db.connect(database='nameroulette')
+    async def updatenames(cur, ctx):
+        server = sql.Literal(str(ctx.guild.id))
+        users = await getUsers(server)
+        for user_id in users:
+            user = ctx.guild.get_user(user_id)
+            users[user]['name'] = user.name
+        await updateusers(server, users)
+
     async def start(ctx):
         while True:
             await registerserver(ctx)
-            nexttime = await getNotifyTime(-5)
-            now = time.time()
-            waittime = nexttime-now
-            await asyncio.sleep(waittime)
+            # nexttime = await getNotifyTime(-5)
+            # now = time.time()
+            # waittime = nexttime-now
+            # await asyncio.sleep(waittime)
+            await updatenames(ctx)
+            await reset(ctx)
             await ping(ctx)
+            

@@ -138,41 +138,45 @@ if  __package__ == 'Emergencyfood':
         @bot.group(hidden=True)
         async def nameroulette(ctx):
             if ctx.invoked_subcommand is None:
-                await ctx.send('Please use a valid subcommand')
-            
-        # @nameroulette.command()
-        # async def roll(ctx):
-        #     await nr.writeuser("';DROP TABLE users; --")
-        #     await nr.writeuserstate("';DROP TABLE users; --", "abc")
-
-        @nameroulette.command()
-        async def roulette(ctx):
-            await nr.checkserver(ctx.guild.id)
+                resp = await ctx.send('Please use a valid subcommand')
+                await resp.delete(delay=3)
+                await ctx.message.delete(delay=3)
 
         @nameroulette.command()
         async def register(ctx):
-            await nr.registerserver(ctx)
-
-        @nameroulette.command()
-        async def user(ctx):
             await nr.registeruser(ctx)
+            await ctx.message.delete(delay=3)
 
         @nameroulette.command()
         async def unregister(ctx):
             await nr.unregisteruser(ctx)
-        
-        @nameroulette.command()
-        async def ping(ctx):
-            await nr.ping(ctx)
+            await ctx.message.delete(delay=3)
 
         @nameroulette.command()
         async def reroll(ctx):
             await nr.reroll(ctx)
-
+            await ctx.message.delete(delay=3)
 
         @nameroulette.command()
-        async def startroulette(ctx):
+        async def add(ctx, addtype='', *choices):
+            if addtype == 'normal':
+                await nr.registerChoices(choices, ctx)
+            elif addtype == 'death':
+                await nr.registerDeathroll(choices, ctx)
+            else:
+                message = await ctx.send('Please enter a valid choice(normal or death)')
+                await message.delete(delay=3)
+            await ctx.message.delete(delay=3)
+
+        @nameroulette.command()
+        async def start(ctx):
+            await ctx.message.delete(delay=3)
             await nr.start(ctx)
+
+        @nameroulette.command()
+        async def reset(ctx):
+            await nr.reset(ctx)
+            await ctx.message.delete(delay=3)
 
         @bot.group(hidden=True)
         async def admin(ctx):
