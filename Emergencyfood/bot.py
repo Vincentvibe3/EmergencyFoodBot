@@ -45,7 +45,7 @@ if  __package__ == 'Emergencyfood':
         @bot.group(aliases=['s'], help='sauce related commands')
         async def sauce(ctx):
             if ctx.invoked_subcommand is None:
-                await ctx.send('Please use a valid subcommand')
+                await ctx.send(f'Please use a valid subcommand see {bot.command_prefix}help for more help')
 
         @sauce.command(help='returns a random sauce', usage='optional: tags to refine search')
         async def randomsauce(ctx, *, tags: typing.Optional[str] = random.choice('a b c d e f g h i j k l m n o p q r s t u v w x y z'.split())):
@@ -138,7 +138,7 @@ if  __package__ == 'Emergencyfood':
         @bot.group(hidden=True)
         async def nameroulette(ctx):
             if ctx.invoked_subcommand is None:
-                resp = await ctx.send('Please use a valid subcommand')
+                resp = await ctx.send(f'Please use a valid subcommand see {bot.command_prefix}help for more help')
                 await resp.delete(delay=3)
                 await ctx.message.delete(delay=3)
 

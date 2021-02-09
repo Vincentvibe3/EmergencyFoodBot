@@ -163,6 +163,7 @@ if __package__ == 'Emergencyfood.modules':
             await resp.delete(delay=3)
 
     async def reroll(ctx):
+        await updatenames(ctx)
         user = str(ctx.author.id)
         server = sql.Literal(str(ctx.guild.id))
         users = await getUsers(server)
@@ -324,9 +325,10 @@ if __package__ == 'Emergencyfood.modules':
         server = sql.Literal(str(ctx.guild.id))
         users = await getUsers(server)
         for user_id in users:
-            user = ctx.guild.get_user(user_id)
-            users[user]['name'] = user.name
+            user = ctx.guild.get_member(int(user_id))
+            users[user_id]['name'] = user.name
         await updateusers(server, users)
+        print(users)
 
     async def start(ctx):
         while True:
@@ -335,6 +337,7 @@ if __package__ == 'Emergencyfood.modules':
             # now = time.time()
             # waittime = nexttime-now
             # await asyncio.sleep(waittime)
+            await asyncio.sleep(30)
             await updatenames(ctx)
             await reset(ctx)
             await ping(ctx)
