@@ -48,7 +48,7 @@ if __package__ == 'Emergencyfood.modules':
             self.url = base_url+urllib.parse.urlencode(parameters)
 
         @db.connect(database='spotify')
-        async def register(self, cur):
+        async def register(cur, self):
             username_Literal = sql.Literal(self.username)
             userid_Literal = sql.Literal(self.user_id)
             query = sql.SQL("INSERT INTO users(name, id) VALUES({username}, {user};").format(username=username_Literal, user=userid_Literal)
@@ -61,7 +61,7 @@ if __package__ == 'Emergencyfood.modules':
             self.ctx = ctx
 
         @db.connect(database='spotify')
-        async def get_access(self, cur):
+        async def get_access(cur, self):
             userid_Literal = sql.Literal(self.user_id)
             query = sql.SQL("SELECT * FROM users WHERE id={user_id};").format(user_id=userid_Literal)
             cur.execute(query)
