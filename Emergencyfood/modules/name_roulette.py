@@ -106,7 +106,7 @@ if __package__ == 'Emergencyfood.modules':
         
         return participants
 
-    async def getroll(ctx, rollnum:int, choices:list):
+    async def getroll( rollnum:int, choices:list):
         chances = [1, 2.5, 5]
         if not choices:
             return None
@@ -172,13 +172,17 @@ if __package__ == 'Emergencyfood.modules':
         user = str(ctx.author.id)
         server = sql.Literal(str(ctx.guild.id))
         users = await getUsers(server)
+        if user not in users:
+            resp = await ctx.send('You can\'t reroll if you are not registered, register and wait for next week')
+            await resp.delete(delay=3)
+            return False
         userproperties = users[user]
         ok = False
         if userproperties['deathroll']:
             response = 'You cannot reroll because of the deathroll'
         elif userproperties['rolls'] < 3:
             choices = await getchoices(server)
-            roll = await getroll(ctx, userproperties['rolls'], choices)
+            roll = await getroll(userproperties['rolls'], choices)
             message = await getmessage(ctx)
             newmessage = await updatemessage(ctx.author.name, user, message, roll, users)
             await message.edit(content=newmessage)
