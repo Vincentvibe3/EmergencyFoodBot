@@ -80,7 +80,7 @@ if __package__ == 'Emergencyfood.modules':
                         self.expiry_time = time.time()+content['expires_in']
                         access = sql.Literal(self.access_token)
                         expiry = sql.Literal(self.expiry_time)
-                        query = sql.SQL("UPDATE users SET access_token='{access}', expiry={expiry} WHERE id='{user_id}';").format(access=access, expiry=expiry, user_id=userid_Literal)
+                        query = sql.SQL("UPDATE users SET access_token={access}, expiry={expiry} WHERE id={user_id};").format(access=access, expiry=expiry, user_id=userid_Literal)
                         cur.execute(query)
 
             self.headers={"Authorization":"Bearer "+self.access_token, "Accept": "application/json", "Content-Type": "application/json"}
