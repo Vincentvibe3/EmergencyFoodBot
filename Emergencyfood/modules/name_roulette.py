@@ -106,7 +106,7 @@ if __package__ == 'Emergencyfood.modules':
         
         return participants
 
-    async def getroll( rollnum:int, choices:list):
+    async def getroll(rollnum:int, choices:list):
         chances = [1, 2.5, 5]
         if not choices:
             return None
@@ -235,7 +235,7 @@ if __package__ == 'Emergencyfood.modules':
             users = await getUsers(server)
             message = '***This weeks deathroll is {}***\n'.format(deathroll)
             for user in users:
-                result = await getroll(ctx, 0, choices)
+                result = await getroll(0, choices)
                 message = f"{message}{users[user]['name']}: {result}\n"
                 users[user]['rolls'] += 1
                 if result == 'Deathroll':
