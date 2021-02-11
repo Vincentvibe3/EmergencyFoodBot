@@ -6,7 +6,7 @@ if  __package__ == 'Emergencyfood':
 
     def setupbot():
         local = False
-        beta = False
+        beta = True
         print('Setting up databases...')
         db.setup(local=local, beta=beta)
         db.createnameroulette()
