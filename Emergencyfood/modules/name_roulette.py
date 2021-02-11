@@ -266,9 +266,9 @@ if __package__ == 'Emergencyfood.modules':
         addcount = 0
         if addleft > 0:
             for choice in choices[:addleft]:
-                if choice not in allchoices:
+                if choice.lower() not in allchoices:
                     addcount+=1
-                    allchoices.append(choice)
+                    allchoices.append(choice.lower())
                 else:
                     redundant.append(choice)
             
@@ -300,9 +300,9 @@ if __package__ == 'Emergencyfood.modules':
         addcount = 0
         if addleft > 0:
             for choice in choices[:addleft]:
-                if choice not in allchoices:
+                if choice.lower() not in allchoices:
                     addcount+=1
-                    allchoices.append(choice)
+                    allchoices.append(choice.lower())
                 else:
                     redundant.append(choice)
             
