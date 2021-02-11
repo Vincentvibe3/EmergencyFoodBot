@@ -28,7 +28,7 @@ if __package__ == 'Emergencyfood.modules':
     @db.connect(database='spotify')
     async def check_membership(cur, ctx):
         user_id = sql.Literal(str(ctx.author.id))
-        query = sql.SQL("SELECT * FROM users WHERE id='{user}';").format(user=user_id)
+        query = sql.SQL("SELECT * FROM users WHERE id={user};").format(user=user_id)
         cur.execute(query)
         result = cur.fetchone()
         if result == None:
