@@ -16,7 +16,7 @@ if  __package__ == 'Emergencyfood':
             TOKEN = os.environ['TOKENBETA']
         elif beta:
             commandPrefix = "$beta"
-            TOKEN = os.environ['TOKENBETA']
+            TOKEN = os.environ['TOKEN']
         else:
             commandPrefix = "$"
             TOKEN = os.environ['TOKEN']
