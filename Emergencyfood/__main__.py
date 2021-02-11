@@ -5,7 +5,7 @@ if  __package__ == 'Emergencyfood':
     from .modules import spotify
 
     def setupbot():
-        local = True
+        local = False
         beta = False
         print('Setting up databases...')
         db.setup(local=local, beta=beta)
