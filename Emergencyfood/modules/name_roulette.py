@@ -36,6 +36,8 @@ if __package__ == 'Emergencyfood.modules':
 
     @db.connect(database='nameroulette')
     async def registeruser(cur, ctx):
+        role = discord.utils.get(ctx.guild.roles, name='Name Roulette')
+        await ctx.author.add_roles(role)
         user = str(ctx.author.id)
         server_id = sql.Literal(str(ctx.guild.id))
         checkguild = await checkserver(server_id)
@@ -59,6 +61,8 @@ if __package__ == 'Emergencyfood.modules':
 
     @db.connect(database='nameroulette')
     async def unregisteruser(cur, ctx):
+        role = discord.utils.get(ctx.guild.roles, name='Name Roulette')
+        await ctx.author.remove_roles(role)
         user = str(ctx.author.id)
         server_id = sql.Literal(str(ctx.guild.id))
         checkguild = await checkserver(server_id)
@@ -86,7 +90,9 @@ if __package__ == 'Emergencyfood.modules':
         check = await checkserver(server_id)
         if not check:
             query = sql.SQL("INSERT INTO servers (id, channel) VALUES({server_id}, {channel});").format(server_id=server_id, channel=channel)
-            cur.execute(query)
+        else:
+            query = sql.SQL("UPDATE servers SET channel={channel} WHERE id={server_id};").format(server_id=server_id, channel=channel)
+        cur.execute(query)
 
     @db.connect(database='nameroulette')
     async def getUsers(cur, server_id:sql.Literal):
@@ -101,7 +107,7 @@ if __package__ == 'Emergencyfood.modules':
         return participants
 
     async def getroll(ctx, rollnum:int, choices:list):
-        chances = [100, 2.5, 5]
+        chances = [1, 2.5, 5]
         if not choices:
             return None
         else:
@@ -163,7 +169,6 @@ if __package__ == 'Emergencyfood.modules':
             await resp.delete(delay=3)
 
     async def reroll(ctx):
-        await updatenames(ctx)
         user = str(ctx.author.id)
         server = sql.Literal(str(ctx.guild.id))
         users = await getUsers(server)
@@ -175,7 +180,7 @@ if __package__ == 'Emergencyfood.modules':
             choices = await getchoices(server)
             roll = await getroll(ctx, userproperties['rolls'], choices)
             message = await getmessage(ctx)
-            newmessage = await updatemessage(message, ctx.author.name, roll)
+            newmessage = await updatemessage(ctx.author.name, user, message, roll, users)
             await message.edit(content=newmessage)
             userproperties['rolls'] += 1
             if roll == 'Deathroll':
@@ -188,6 +193,7 @@ if __package__ == 'Emergencyfood.modules':
         if not ok:
             resp_mess = await ctx.send(response)
             await resp_mess.delete(delay=3)
+        await updatenames(ctx)
 
     @db.connect(database='nameroulette')
     async def updateusers(cur, server:sql.Literal, users:dict):
@@ -195,15 +201,17 @@ if __package__ == 'Emergencyfood.modules':
         query = sql.SQL("UPDATE servers SET users={users} WHERE id={server}").format(users=usersjson , server=server)
         cur.execute(query)
 
-    async def updatemessage(message:discord.Message, username:str, newrole:str):
+    async def updatemessage(username:str, user_id:str, message:discord.Message, newrole:str, users:dict):
+        old_username = users[user_id]['name']
         newmessage = ''
         toParse = message.content.split('\n')
         for user in toParse[1:]:
-            if username in user:
+            if old_username in user:
                 if newrole == 'Deathroll':
                     toParse.append(f'{username}: {newrole}')
                 else:
-                    toParse.append(f'{toParse[toParse.index(user)]}, {newrole}')
+                    user_entry = toParse[toParse.index(user)].split(':')
+                    toParse.append(f'{username}:{user_entry[1]}, {newrole}')
                 del toParse[toParse.index(user)]
         for entry in toParse:
             newmessage = f'{newmessage}{entry}\n'
@@ -328,17 +336,51 @@ if __package__ == 'Emergencyfood.modules':
             user = ctx.guild.get_member(int(user_id))
             users[user_id]['name'] = user.name
         await updateusers(server, users)
-        print(users)
+
+    async def listall(ctx):
+        server = sql.Literal(str(ctx.guild.id))
+        deathrolls = await getDeathrolls(server)
+        standardrolls = await getchoices(server)
+        message = await ctx.send(f'Death: {" ".join(deathrolls)}\nNormal: {" ".join(standardrolls)}')
+        await message.delete(delay=3)
+
+    @db.connect(database='nameroulette')
+    async def updatedeath(cur, server:sql.Literal, rolls:list):
+        rollsjson = sql.Literal(json.dumps(rolls))
+        query = sql.SQL("UPDATE servers SET deathrolls={rolls} WHERE id={server};").format(rolls=rollsjson, server=server)
+        cur.execute(query)
+
+    @db.connect(database='nameroulette')
+    async def updatechoices(cur, server:sql.Literal, rolls:list):
+        rollsjson = sql.Literal(json.dumps(rolls))
+        query = sql.SQL("UPDATE servers SET standardrolls={rolls} WHERE id={server};").format(rolls=rollsjson, server=server)
+        cur.execute(query)
+
+    async def remove(ctx, rolltype, choice):
+        server = sql.Literal(str(ctx.guild.id))
+        if rolltype == 'normal':
+            choices = await getchoices(server)
+            index = choices.index(choice)
+            del choices[index]
+            await updatechoices(server, choices)
+            message = await ctx.send('removed')
+        elif rolltype == 'death':
+            deathrolls = await getchoices(server)
+            index = deathrolls.index(choice)
+            del deathrolls[index]
+            await updatedeath(server, deathrolls)
+            message = await ctx.send('removed')
+        else:
+            message = await ctx.send('An error occured: non-compliant type received')
+        await message.delete(delay=3)
 
     async def start(ctx):
         while True:
             await registerserver(ctx)
-            # nexttime = await getNotifyTime(-5)
-            # now = time.time()
-            # waittime = nexttime-now
-            # await asyncio.sleep(waittime)
-            await asyncio.sleep(30)
+            nexttime = await getNotifyTime(-5)
+            now = time.time()
+            waittime = nexttime-now
+            await asyncio.sleep(waittime)
             await updatenames(ctx)
             await reset(ctx)
             await ping(ctx)
-            

@@ -16,7 +16,7 @@ if  __package__ == 'Emergencyfood':
             TOKEN = os.environ['TOKENBETA']
         elif beta:
             commandPrefix = "$beta"
-            TOKEN = os.environ['TOKEN']
+            TOKEN = os.environ['TOKENBETA']
         else:
             commandPrefix = "$"
             TOKEN = os.environ['TOKEN']
@@ -135,30 +135,34 @@ if  __package__ == 'Emergencyfood':
                 register = spotify.register(ctx, username)
                 await register.register() 
 
-        @bot.group(hidden=True)
+        @bot.group(aliases=['nr'], help='name roulette commands')
         async def nameroulette(ctx):
             if ctx.invoked_subcommand is None:
                 resp = await ctx.send(f'Please use a valid subcommand see {bot.command_prefix}help for more help')
                 await resp.delete(delay=3)
                 await ctx.message.delete(delay=3)
 
-        @nameroulette.command()
+        @nameroulette.command(help='register to name roulette')
         async def register(ctx):
+            await ctx.message.delete(delay=3)
             await nr.registeruser(ctx)
-            await ctx.message.delete(delay=3)
+            
 
-        @nameroulette.command()
+        @nameroulette.command(help='unregister from name roulette')
         async def unregister(ctx):
+            await ctx.message.delete(delay=3)
             await nr.unregisteruser(ctx)
-            await ctx.message.delete(delay=3)
+            
 
-        @nameroulette.command()
+        @nameroulette.command(help='reroll for name roulette')
         async def reroll(ctx):
-            await nr.reroll(ctx)
             await ctx.message.delete(delay=3)
+            await nr.reroll(ctx)
+            
 
-        @nameroulette.command()
+        @nameroulette.command(help='register a roll', usage='(normal|death) choices \n*if the choices have spaces in their names put it in quotes\n ex: add normal "Violet Evergarden" k-on')
         async def add(ctx, addtype='', *choices):
+            await ctx.message.delete(delay=3)
             if addtype == 'normal':
                 await nr.registerChoices(choices, ctx)
             elif addtype == 'death':
@@ -166,17 +170,66 @@ if  __package__ == 'Emergencyfood':
             else:
                 message = await ctx.send('Please enter a valid choice(normal or death)')
                 await message.delete(delay=3)
-            await ctx.message.delete(delay=3)
+            
 
-        @nameroulette.command()
+        @nameroulette.command(hidden=True)
         async def start(ctx):
             await ctx.message.delete(delay=3)
-            await nr.start(ctx)
-
-        @nameroulette.command()
-        async def reset(ctx):
-            await nr.reset(ctx)
+            ok = False
+            for role in ctx.author.roles:
+                if 'Event Organizer' == role.name:
+                    ok = True
+                    break
+                else:
+                    ok = False
             await ctx.message.delete(delay=3)
+            if ok:
+                await nr.start(ctx)
+            else:
+                message = await ctx.send('You don\'t have permission for this')
+                await message.delete(delay=3)
+
+        @nameroulette.command(hidden=True)
+        async def reset(ctx):
+            ok = False
+            for role in ctx.author.roles:
+                if 'Event Organizer' == role.name:
+                    ok = True
+                    break
+                else:
+                    ok = False
+            await ctx.message.delete(delay=3)
+            if ok:
+                await nr.reset(ctx)
+            else:
+                message = await ctx.send('You don\'t have permission for this')
+                await message.delete(delay=3)
+
+        @nameroulette.command(help='shows all possible rolls')
+        async def listrolls(ctx):
+            await ctx.message.delete(delay=3)
+            await nr.listall(ctx)
+            
+        @nameroulette.command(hidden=True)
+        async def remove(ctx, choice, rolltype=''):
+            ok = False
+            for role in ctx.author.roles:
+                if 'Event Organizer' == role.name:
+                    ok = True
+                    break
+                else:
+                    ok = False
+            await ctx.message.delete(delay=3)
+            if ok:
+                if rolltype == 'normal' or rolltype == 'death':
+                    await nr.remove(ctx, rolltype, choice)
+                else:
+                    message = await ctx.send('Please specify a type to remove')
+                    await message.delete(delay=3)
+            else:
+                message = await ctx.send('You don\'t have permission for this')
+                await message.delete(delay=3)
+
 
         @bot.group(hidden=True)
         async def admin(ctx):
