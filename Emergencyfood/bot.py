@@ -162,7 +162,6 @@ if  __package__ == 'Emergencyfood':
 
         @nameroulette.command(help='register a roll', usage='(normal|death) choices \n*if the choices have spaces in their names put it in quotes\n ex: add normal "Violet Evergarden" k-on')
         async def add(ctx, addtype='', *choices):
-            await ctx.message.delete(delay=3)
             if addtype == 'normal':
                 await nr.registerChoices(choices, ctx)
             elif addtype == 'death':
