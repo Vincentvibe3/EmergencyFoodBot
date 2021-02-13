@@ -206,7 +206,7 @@ if  __package__ == 'Emergencyfood':
 
         @nameroulette.command(help='shows all possible rolls')
         async def listrolls(ctx):
-            await ctx.message.delete(delay=60)
+            await ctx.message.delete(delay=3)
             await nr.listall(ctx)
             
         @nameroulette.command(hidden=True)
