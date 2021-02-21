@@ -184,6 +184,7 @@ if  __package__ == 'Emergencyfood':
             await ctx.message.delete(delay=3)
             if ok:
                 await nr.start(ctx)
+                print('started')
             else:
                 message = await ctx.send('You don\'t have permission for this')
                 await message.delete(delay=3)
@@ -200,6 +201,23 @@ if  __package__ == 'Emergencyfood':
             await ctx.message.delete(delay=3)
             if ok:
                 await nr.reset(ctx)
+            else:
+                message = await ctx.send('You don\'t have permission for this')
+                await message.delete(delay=3)
+
+        @nameroulette.command(hidden=True)
+        async def manualstart(ctx):
+            ok = False
+            for role in ctx.author.roles:
+                if 'Event Organizer' == role.name:
+                    ok = True
+                    break
+                else:
+                    ok = False
+            await ctx.message.delete(delay=3)
+            if ok:
+                await nr.manualroll(ctx)
+                print('manualstart')
             else:
                 message = await ctx.send('You don\'t have permission for this')
                 await message.delete(delay=3)

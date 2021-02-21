@@ -387,3 +387,9 @@ if __package__ == 'Emergencyfood.modules':
             await updatenames(ctx)
             await reset(ctx)
             await ping(ctx)
+
+    async def manualroll(ctx):
+        await registerserver(ctx)
+        await updatenames(ctx)
+        await reset(ctx)
+        await ping(ctx)
