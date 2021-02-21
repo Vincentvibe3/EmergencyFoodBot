@@ -383,6 +383,8 @@ if __package__ == 'Emergencyfood.modules':
             nexttime = await getNotifyTime(-5)
             now = time.time()
             waittime = nexttime-now
+            print(waittime)
+            print(nexttime)
             await asyncio.sleep(waittime)
             await updatenames(ctx)
             await reset(ctx)
