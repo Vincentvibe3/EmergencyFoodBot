@@ -248,6 +248,22 @@ if  __package__ == 'Emergencyfood':
                 message = await ctx.send('You don\'t have permission for this')
                 await message.delete(delay=3)
 
+        @nameroulette.command(hidden=True)
+        async def resetadds(ctx):
+            ok = False
+            for role in ctx.author.roles:
+                if 'Event Organizer' == role.name:
+                    ok = True
+                    break
+                else:
+                    ok = False
+            await ctx.message.delete(delay=3)
+            if ok:
+                await nr.resetadds(ctx)
+                
+            else:
+                message = await ctx.send('You don\'t have permission for this')
+                await message.delete(delay=3)
 
         @bot.group(hidden=True)
         async def admin(ctx):

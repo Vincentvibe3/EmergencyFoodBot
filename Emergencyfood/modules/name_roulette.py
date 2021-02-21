@@ -331,6 +331,15 @@ if __package__ == 'Emergencyfood.modules':
             users[user]['rolls'] = 0
             users[user]['deathroll'] = False
         await updateusers(server, users)
+    
+    @db.connect(database='nameroulette')
+    async def resetadds(cur, ctx):
+        server = sql.Literal(str(ctx.guild.id))
+        users = await getUsers(server)
+        for user in users:
+            users[user]['add'] = 3
+            users[user]['adddeath'] = 2
+        await updateusers(server, users)
 
     @db.connect(database='nameroulette')
     async def updatenames(cur, ctx):
