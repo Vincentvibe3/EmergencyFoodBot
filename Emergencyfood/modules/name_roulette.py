@@ -368,7 +368,7 @@ if __package__ == 'Emergencyfood.modules':
             await updatechoices(server, choices)
             message = await ctx.send('removed')
         elif rolltype == 'death':
-            deathrolls = await getchoices(server)
+            deathrolls = await getDeathrolls(server)
             index = deathrolls.index(choice)
             del deathrolls[index]
             await updatedeath(server, deathrolls)
