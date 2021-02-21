@@ -262,11 +262,12 @@ if __package__ == 'Emergencyfood.modules':
         users = await getUsers(server)
         addleft = users[user]['add']
         allchoices = await getchoices(server)
+        deaths = await getDeathrolls(server)
         redundant = []
         addcount = 0
         if addleft > 0:
             for choice in choices[:addleft]:
-                if choice.lower() not in allchoices:
+                if choice.lower() not in allchoices or choice.lower() not in deaths:
                     addcount+=1
                     allchoices.append(choice.lower())
                 else:
@@ -276,7 +277,7 @@ if __package__ == 'Emergencyfood.modules':
                 message = ''
                 for entry in redundant:
                     message = f'{message}, {entry}'
-                resp = await ctx.send(f'{message[1:]} was/were already in the rolls')
+                resp = await ctx.send(f'{message[1:]} was/were already in the rolls or deathrolls')
                 await resp.delete(delay=3)
 
             users[user]['add'] = addleft-addcount
@@ -296,11 +297,12 @@ if __package__ == 'Emergencyfood.modules':
         users = await getUsers(server)
         addleft = users[user]['adddeath']
         allchoices = await getDeathrolls(server)
+        normals = await getchoices(server)
         redundant = []
         addcount = 0
         if addleft > 0:
             for choice in choices[:addleft]:
-                if choice.lower() not in allchoices:
+                if choice.lower() not in allchoices and choice.lower() not in normals:
                     addcount+=1
                     allchoices.append(choice.lower())
                 else:
@@ -310,7 +312,7 @@ if __package__ == 'Emergencyfood.modules':
                 message = ''
                 for entry in redundant:
                     message = f'{message}, {entry}'
-                resp = await ctx.send(f'{message[1:]} was/were already in the deathrolls')
+                resp = await ctx.send(f'{message[1:]} was/were already in the deathrolls or in normal rolls')
                 await resp.delete(delay=3)
                 
             users[user]['adddeath'] = addleft-addcount
