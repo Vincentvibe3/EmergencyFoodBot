@@ -183,8 +183,8 @@ if  __package__ == 'Emergencyfood':
                     ok = False
             await ctx.message.delete(delay=3)
             if ok:
-                await nr.start(ctx)
                 print('started')
+                await nr.start(ctx)
             else:
                 message = await ctx.send('You don\'t have permission for this')
                 await message.delete(delay=3)
@@ -216,8 +216,9 @@ if  __package__ == 'Emergencyfood':
                     ok = False
             await ctx.message.delete(delay=3)
             if ok:
-                await nr.manualroll(ctx)
                 print('manualstart')
+                await nr.manualroll(ctx)
+                
             else:
                 message = await ctx.send('You don\'t have permission for this')
                 await message.delete(delay=3)
