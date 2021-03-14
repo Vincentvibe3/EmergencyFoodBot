@@ -168,6 +168,13 @@ if __package__ == 'Emergencyfood.modules':
             resp = await ctx.send('server is not registered')
             await resp.delete(delay=3)
 
+    async def checkPrevious(username, message, roll):
+        toParse = message.content.split('\n')
+        for user in toParse[1:]:
+            if username in user and roll in user[len(username):]:
+                return True
+        return False
+
     async def reroll(ctx):
         user = str(ctx.author.id)
         server = sql.Literal(str(ctx.guild.id))
@@ -181,9 +188,12 @@ if __package__ == 'Emergencyfood.modules':
         if userproperties['deathroll']:
             response = 'You cannot reroll because of the deathroll'
         elif userproperties['rolls'] < 3:
-            choices = await getchoices(server)
-            roll = await getroll(userproperties['rolls'], choices)
+            keeprolling = True
             message = await getmessage(ctx)
+            while keeprolling:
+                choices = await getchoices(server)
+                roll = await getroll(userproperties['rolls'], choices)
+                keeprolling = await checkPrevious(users[user]['name'], message, roll)
             newmessage = await updatemessage(ctx.author.name, user, message, roll, users)
             await message.edit(content=newmessage)
             userproperties['rolls'] += 1
