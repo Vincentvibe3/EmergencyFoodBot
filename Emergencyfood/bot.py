@@ -8,7 +8,7 @@ from discord.ext import commands
 
 #command modules
 if  __package__ == 'Emergencyfood':
-    from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette as nr
+    from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette as nr, musicplayer as mp
 
     def createbot(local=False, beta=False):
         if local:
@@ -264,6 +264,14 @@ if  __package__ == 'Emergencyfood':
             else:
                 message = await ctx.send('You don\'t have permission for this')
                 await message.delete(delay=3)
+
+        @bot.group(hidden=True)
+        async def music(ctx):
+            pass
+
+        @music.command()
+        async def play(ctx):
+            await mp.play(ctx)
 
         @bot.group(hidden=True)
         async def admin(ctx):
