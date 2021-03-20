@@ -270,8 +270,19 @@ if  __package__ == 'Emergencyfood':
             pass
 
         @music.command()
-        async def play(ctx):
-            await mp.play(ctx)
+        async def play(ctx, *, song:typing.Optional[str]=""):
+            if song:
+                await mp.playsong(ctx, song)
+            else:
+                await mp.resume(ctx)
+
+        @music.command()
+        async def pause(ctx):
+            await mp.pause(ctx)
+
+        @music.command()
+        async def stop(ctx):
+            await mp.stop(ctx)
 
         @bot.group(hidden=True)
         async def admin(ctx):
