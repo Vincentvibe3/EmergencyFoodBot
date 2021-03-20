@@ -22,9 +22,13 @@ async def connect(ctx):
     return voiceclient
 
 async def playsong(ctx, song):
+    if ctx.voice_client:
+        voiceclient = await connect(ctx)
+    else:
+        voiceclient = ctx.voice_client
+        
     stream = await getstream(song)
     audio =  discord.FFmpegPCMAudio(stream)
-    voiceclient = await connect(ctx)
     voiceclient.play(audio)
 
 async def resume(ctx):
