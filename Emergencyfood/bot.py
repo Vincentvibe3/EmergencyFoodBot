@@ -273,9 +273,11 @@ if  __package__ == 'Emergencyfood':
         async def play(ctx, *, song:typing.Optional[str]=""):
             if song:
                 if str(ctx.guild.id) not in mp.config:
-                    mp.config[str(ctx.guild.id)] = {'loop': True, 'queue':[], 'skip':False}
+                    mp.config[str(ctx.guild.id)] = {'loop': False, 'queue':[], 'skip':False}
                 await mp.add_to_queue(ctx, song)
                 if not ctx.voice_client:
+                    await mp.connect(ctx)
+                if not ctx.voice_client.is_playing():
                     await mp.playsong(ctx)
             else:
                 await mp.resume(ctx)
@@ -286,8 +288,8 @@ if  __package__ == 'Emergencyfood':
 
         @music.command()
         async def clear(ctx):
-            await mp.clear_queue(ctx)
             await mp.stop(ctx)
+            await mp.clear_queue(ctx)
 
         @music.command()
         async def disconnect(ctx):

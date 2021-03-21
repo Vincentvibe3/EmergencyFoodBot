@@ -40,11 +40,11 @@ async def add_to_queue(ctx, song):
     queue.append((name, url, song))
 
 async def playsong(ctx):
-    voiceclient = await connect(ctx)
-    queue = config[str(ctx.guild.id)]['queue']
+    voiceclient = ctx.voice_client
     first = True
     while config[str(ctx.guild.id)]['loop'] or first==True:
         first = False
+        queue = config[str(ctx.guild.id)]['queue']
         for element in queue:
             stream, title, url = await getstreaminfo(element[2])
             audio =  discord.FFmpegPCMAudio(stream, **FFMPEGOPTS)
@@ -59,6 +59,9 @@ async def playsong(ctx):
                 config[str(ctx.guild.id)]['skip'] = False
                 voiceclient.stop()
             await message.delete()
+            if not config[str(ctx.guild.id)]['queue']:
+                return
+    await clear_queue(ctx)
             
 
 async def view_queue(ctx):
@@ -71,7 +74,7 @@ async def view_queue(ctx):
 
 async def clear_queue(ctx):
     if str(ctx.guild.id) in config:
-        del config[str(ctx.guild.id)]['queue']
+        config[str(ctx.guild.id)]['queue'] = []
 
 async def resume(ctx):
     check = await checkpause(ctx)
@@ -88,8 +91,8 @@ async def stop(ctx):
 
 async def disconnect(ctx):
     if ctx.voice_client:
-        del config[str(ctx.guild.id)]
         await ctx.voice_client.disconnect()
+        await ctx.voice_client.cleanup()
     else:
         await ctx.send("the bot must be connected to disconnect")
 
