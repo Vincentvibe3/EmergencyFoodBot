@@ -32,7 +32,7 @@ if  __package__ == 'Emergencyfood':
         @bot.event
         async def on_ready():
             print('Logged in as {0.user}'.format(bot))
-            await bot.change_presence(activity= discord.Game('Kevin is horny'))
+            await bot.change_presence(activity= discord.Game('Use $help for commands'))
             print('\nAdded in following servers:')
             for guilds in bot.guilds:
                 print(" -"+str(guilds))
@@ -272,7 +272,11 @@ if  __package__ == 'Emergencyfood':
         @music.command()
         async def play(ctx, *, song:typing.Optional[str]=""):
             if song:
-                await mp.playsong(ctx, song)
+                if str(ctx.guild.id) not in mp.config:
+                    mp.config[str(ctx.guild.id)] = {'loop': True, 'queue':[], 'skip':False}
+                await mp.add_to_queue(ctx, song)
+                if not ctx.voice_client:
+                    await mp.playsong(ctx)
             else:
                 await mp.resume(ctx)
 
@@ -281,8 +285,27 @@ if  __package__ == 'Emergencyfood':
             await mp.pause(ctx)
 
         @music.command()
-        async def stop(ctx):
+        async def clear(ctx):
+            await mp.clear_queue(ctx)
             await mp.stop(ctx)
+
+        @music.command()
+        async def disconnect(ctx):
+            await mp.clear_queue(ctx)
+            await mp.disconnect(ctx)
+
+
+        @music.command()
+        async def skip(ctx):
+            mp.config[str(ctx.guild.id)]['skip'] = True
+        
+        @music.command()
+        async def loop(ctx):
+            mp.config[str(ctx.guild.id)]['loop'] = not mp.config[str(ctx.guild.id)]['loop']
+        
+        @music.command()
+        async def queue(ctx):
+            await mp.view_queue(ctx)
 
         @bot.group(hidden=True)
         async def admin(ctx):
