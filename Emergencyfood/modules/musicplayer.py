@@ -1,3 +1,4 @@
+import asyncio
 
 import discord
 import youtube_dl
@@ -6,16 +7,20 @@ YTDLOPTS={'default_search': 'ytsearch'}
 ytdl = youtube_dl.YoutubeDL(YTDLOPTS)
 FFMPEGOPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
-async def getstream(query):
+async def getstreaminfo(query):
     video = ytdl.extract_info(url=query, download=False)
     if "https://www.youtube.com/watch?v=" in query:
         formats = video["formats"]
     else:
         formats = video["entries"][0]["formats"]
+    quality = []
     for fileformat in formats:
         if fileformat["acodec"] == "opus":
-            print(fileformat["url"])
-            return fileformat["url"]
+            quality.append((fileformat["abr"], fileformat["url"]))
+    quality.sort()
+    quality.reverse()
+    url = f'https://www.youtube.com/watch?v={video["entries"][0]["id"]}'
+    return quality[0][1], video["entries"][0]['title'], url 
 
 async def connect(ctx):
     voicechannel = ctx.message.author.voice.channel
@@ -29,9 +34,13 @@ async def playsong(ctx, song):
     else:
         voiceclient = await connect(ctx)
 
-    stream = await getstream(song)
+    stream, title, url = await getstreaminfo(song)
     audio =  discord.FFmpegPCMAudio(stream, **FFMPEGOPTS)
     voiceclient.play(audio)
+    embed_color = discord.Colour.from_rgb(120, 205, 215)
+    track_info = f'[{title}]({url})'
+    embed = discord.Embed(title='Playing:', description=track_info, colour=embed_color)
+    await ctx.send(embed=embed)
 
 async def resume(ctx):
     check = await checkpause(ctx)
