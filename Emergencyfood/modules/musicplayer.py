@@ -71,7 +71,7 @@ async def view_queue(ctx):
 
 async def clear_queue(ctx):
     if str(ctx.guild.id) in config:
-        del config[str(ctx.guild.id)]
+        del config[str(ctx.guild.id)]['queue']
 
 async def resume(ctx):
     check = await checkpause(ctx)
@@ -88,6 +88,7 @@ async def stop(ctx):
 
 async def disconnect(ctx):
     if ctx.voice_client:
+        del config[str(ctx.guild.id)]
         await ctx.voice_client.disconnect()
     else:
         await ctx.send("the bot must be connected to disconnect")
