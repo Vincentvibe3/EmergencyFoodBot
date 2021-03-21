@@ -2,8 +2,9 @@
 import discord
 import youtube_dl
 
-ytdlopts={'default_search': 'ytsearch'}
-ytdl = youtube_dl.YoutubeDL(ytdlopts)
+YTDLOPTS={'default_search': 'ytsearch'}
+ytdl = youtube_dl.YoutubeDL(YTDLOPTS)
+FFMPEGOPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
 async def getstream(query):
     video = ytdl.extract_info(url=query, download=False)
@@ -13,6 +14,7 @@ async def getstream(query):
         formats = video["entries"][0]["formats"]
     for fileformat in formats:
         if fileformat["acodec"] == "opus":
+            print(fileformat["url"])
             return fileformat["url"]
 
 async def connect(ctx):
@@ -28,7 +30,7 @@ async def playsong(ctx, song):
         voiceclient = await connect(ctx)
 
     stream = await getstream(song)
-    audio =  discord.FFmpegPCMAudio(stream)
+    audio =  discord.FFmpegPCMAudio(stream, **FFMPEGOPTS)
     voiceclient.play(audio)
 
 async def resume(ctx):
