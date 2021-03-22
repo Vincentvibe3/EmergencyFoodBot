@@ -64,7 +64,7 @@ class player():
                 track_info = f'[{title}]({url})'
                 embed = discord.Embed(title='Now Playing:', description=track_info, colour=embed_color)
                 self.message = await self.ctx.send(embed=embed)
-                while self.voiceclient.is_playing() or self.voiceclient.is_paused() and config[str(self.ctx.guild.id)]['skip'] is False:
+                while (self.voiceclient.is_playing() or self.voiceclient.is_paused()) and config[str(self.ctx.guild.id)]['skip'] is False:
                     await asyncio.sleep(1)
                 if config[str(self.ctx.guild.id)]['skip'] is True:
                     config[str(self.ctx.guild.id)]['skip'] = False
