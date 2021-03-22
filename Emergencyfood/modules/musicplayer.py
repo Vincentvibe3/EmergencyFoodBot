@@ -53,7 +53,6 @@ class player():
     
     async def playsong(self):
         first = True
-        self.firstend = True
         while config[str(self.ctx.guild.id)]['loop'] or first==True:
             first = False
             queue = config[str(self.ctx.guild.id)]['queue']
@@ -76,6 +75,11 @@ class player():
                     return
 
         await clear_queue(self.ctx)
+        while True:
+            await asyncio.sleep(1)
+            await self.check_disconnect()
+            if self.voiceclient.is_playing() or self.voiceclient.is_paused():
+                break
 
 async def view_queue(ctx):
     queue = config[str(ctx.guild.id)]['queue']

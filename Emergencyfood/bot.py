@@ -277,7 +277,7 @@ if  __package__ == 'Emergencyfood':
                 await mp.add_to_queue(ctx, song)
                 if not ctx.voice_client:
                     await mp.connect(ctx)
-                if not ctx.voice_client.is_playing():
+                if not ctx.voice_client.is_playing() and not ctx.voice_client.is_paused():
                     player = mp.player(ctx)
                     await player.playsong()
             else:
