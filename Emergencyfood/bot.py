@@ -278,7 +278,8 @@ if  __package__ == 'Emergencyfood':
                 if not ctx.voice_client:
                     await mp.connect(ctx)
                 if not ctx.voice_client.is_playing():
-                    await mp.playsong(ctx)
+                    player = mp.player(ctx)
+                    await player.playsong()
             else:
                 await mp.resume(ctx)
 

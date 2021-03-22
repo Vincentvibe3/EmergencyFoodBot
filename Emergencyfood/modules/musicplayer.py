@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 import discord
 import youtube_dl
@@ -39,30 +40,42 @@ async def add_to_queue(ctx, song):
     stream, name, url = await getstreaminfo(song)
     queue.append((name, url, song))
 
-async def playsong(ctx):
-    voiceclient = ctx.voice_client
-    first = True
-    while config[str(ctx.guild.id)]['loop'] or first==True:
-        first = False
-        queue = config[str(ctx.guild.id)]['queue']
-        for element in queue:
-            stream, title, url = await getstreaminfo(element[2])
-            audio =  discord.FFmpegPCMAudio(stream, **FFMPEGOPTS)
-            voiceclient.play(audio)
-            embed_color = discord.Colour.from_rgb(120, 205, 215)
-            track_info = f'[{title}]({url})'
-            embed = discord.Embed(title='Now Playing:', description=track_info, colour=embed_color)
-            message = await ctx.send(embed=embed)
-            while voiceclient.is_playing() and config[str(ctx.guild.id)]['skip'] is False:
-                await asyncio.sleep(1)
-            if config[str(ctx.guild.id)]['skip'] is True:
-                config[str(ctx.guild.id)]['skip'] = False
-                voiceclient.stop()
-            await message.delete()
-            if not config[str(ctx.guild.id)]['queue']:
-                return
-    await clear_queue(ctx)
-            
+class player():
+    def __init__(self, ctx):
+        self.ctx = ctx
+        self.voiceclient = ctx.voice_client
+
+    async def check_disconnect(self):
+        if len(self.voiceclient.channel.members) == 1:
+            await clear_queue(self.ctx)
+            await stop(self.ctx)
+            await disconnect(self.ctx)
+    
+    async def playsong(self):
+        first = True
+        self.firstend = True
+        while config[str(self.ctx.guild.id)]['loop'] or first==True:
+            first = False
+            queue = config[str(self.ctx.guild.id)]['queue']
+            for element in queue:
+                stream, title, url = await getstreaminfo(element[2])
+                audio =  discord.FFmpegPCMAudio(stream, **FFMPEGOPTS)
+                self.voiceclient.play(audio)
+                embed_color = discord.Colour.from_rgb(120, 205, 215)
+                track_info = f'[{title}]({url})'
+                embed = discord.Embed(title='Now Playing:', description=track_info, colour=embed_color)
+                self.message = await self.ctx.send(embed=embed)
+                while self.voiceclient.is_playing() or self.voiceclient.is_paused() and config[str(self.ctx.guild.id)]['skip'] is False:
+                    await asyncio.sleep(1)
+                if config[str(self.ctx.guild.id)]['skip'] is True:
+                    config[str(self.ctx.guild.id)]['skip'] = False
+                    self.voiceclient.stop()
+                await self.message.delete()
+                await self.check_disconnect()
+                if not config[str(self.ctx.guild.id)]['queue']:
+                    return
+
+        await clear_queue(self.ctx)
 
 async def view_queue(ctx):
     queue = config[str(ctx.guild.id)]['queue']
@@ -92,7 +105,6 @@ async def stop(ctx):
 async def disconnect(ctx):
     if ctx.voice_client:
         await ctx.voice_client.disconnect()
-        await ctx.voice_client.cleanup()
     else:
         await ctx.send("the bot must be connected to disconnect")
 
