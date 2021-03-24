@@ -11,6 +11,8 @@ FFMPEGOPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_d
 config = {}
 
 async def getstreaminfo(query):
+    if query == 'https://listen.moe/opus':
+        return 'https://listen.moe/opus', 'Listen.moe', 'https://listen.moe/'
     video = ytdl.extract_info(url=query, download=False)
     if "https://www.youtube.com/watch?v=" in query:
         formats = video["formats"]
@@ -50,6 +52,9 @@ class player():
             await clear_queue(self.ctx)
             await stop(self.ctx)
             await disconnect(self.ctx)
+            return True
+        else:
+            return False
     
     async def playsong(self):
         first = True
@@ -77,7 +82,9 @@ class player():
         await clear_queue(self.ctx)
         while True:
             await asyncio.sleep(1)
-            await self.check_disconnect()
+            leave = await self.check_disconnect()
+            if leave:
+                break
             if self.voiceclient.is_playing() or self.voiceclient.is_paused():
                 break
 
@@ -108,6 +115,7 @@ async def stop(ctx):
 
 async def disconnect(ctx):
     if ctx.voice_client:
+        del config[str(ctx.guild.id)]
         await ctx.voice_client.disconnect()
     else:
         await ctx.send("the bot must be connected to disconnect")

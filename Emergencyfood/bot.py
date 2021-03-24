@@ -297,7 +297,6 @@ if  __package__ == 'Emergencyfood':
             await mp.clear_queue(ctx)
             await mp.disconnect(ctx)
 
-
         @music.command()
         async def skip(ctx):
             mp.config[str(ctx.guild.id)]['skip'] = True
@@ -309,6 +308,10 @@ if  __package__ == 'Emergencyfood':
         @music.command()
         async def queue(ctx):
             await mp.view_queue(ctx)
+
+        @music.command()
+        async def listenmoe(ctx):
+            await play(ctx, song='https://listen.moe/opus')
 
         @bot.group(hidden=True)
         async def admin(ctx):
