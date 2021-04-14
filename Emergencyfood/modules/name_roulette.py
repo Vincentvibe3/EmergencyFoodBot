@@ -366,7 +366,7 @@ if __package__ == 'Emergencyfood.modules':
         server = sql.Literal(str(ctx.guild.id))
         deathrolls = await getDeathrolls(server)
         standardrolls = await getchoices(server)
-        await ctx.send(f'Death: {" ".join(deathrolls)}\nNormal: {" ".join(standardrolls)}')
+        await ctx.send(f'Death: {", ".join(deathrolls)}\nNormal: {", ".join(standardrolls)}')
 
     @db.connect(database='nameroulette')
     async def updatedeath(cur, server:sql.Literal, rolls:list):
