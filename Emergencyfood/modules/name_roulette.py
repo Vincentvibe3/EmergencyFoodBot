@@ -107,7 +107,7 @@ if __package__ == 'Emergencyfood.modules':
         return participants
 
     async def getroll(rollnum:int, choices:list):
-        chances = [5, 20, 40]
+        chances = [5, 10, 30]
         if not choices:
             return None
         else:
