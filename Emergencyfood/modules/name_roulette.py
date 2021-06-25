@@ -243,7 +243,7 @@ if __package__ == 'Emergencyfood.modules':
             pingrole = discord.utils.get(ctx.guild.roles, name='Name Roulette')
             await ctx.send('------------\n'+pingrole.mention)
             users = await getUsers(server)
-            message = '***This weeks deathroll is {}***\n'.format(deathroll)
+            message = "***This week's deathroll is {}***\n".format(deathroll)
             for user in users:
                 result = await getroll(0, choices)
                 message = f"{message}{users[user]['name']}: {result}\n"
