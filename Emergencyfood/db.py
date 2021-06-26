@@ -57,6 +57,11 @@ def createnameroulette(cur):
     with open(schemaPath) as schema:
         cur.execute(schema.read())
         
+@syncconnect(database='nameroulette')
+def createPing(cur):
+    schemaPath = os.path.join(SQL_PATH, 'ping.sql')
+    with open(schemaPath) as schema:
+        cur.execute(schema.read())
 
 @syncconnect(database='spotify')
 def createspotify(cur):

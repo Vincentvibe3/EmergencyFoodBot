@@ -34,7 +34,7 @@ async def getstreaminfo(query):
 async def connect(ctx):
     voicechannel = ctx.message.author.voice.channel
     voiceclient = await voicechannel.connect()
-    await ctx.guild.change_voice_state(channel=voicechannel, self_deaf=True)
+    await ctx.guild.change_voice_state(channel=voicechannel)
     return voiceclient
 
 async def add_to_queue(ctx, song):
@@ -64,6 +64,7 @@ class player():
             for element in queue:
                 stream, title, url = await getstreaminfo(element[2])
                 audio =  discord.FFmpegPCMAudio(stream, **FFMPEGOPTS)
+                await self.ctx.me.edit(deafen=True)
                 self.voiceclient.play(audio)
                 embed_color = discord.Colour.from_rgb(120, 205, 215)
                 track_info = f'[{title}]({url})'

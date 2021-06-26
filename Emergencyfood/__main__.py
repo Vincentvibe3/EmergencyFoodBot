@@ -11,6 +11,7 @@ if  __package__ == 'Emergencyfood':
         db.setup(local=local, beta=beta)
         db.createnameroulette()
         db.createspotify()
+        db.createPing()
         print('Setting up api secrets...')
         spotify.setupsecrets(local=local)
         print('Creating bot instance...')
