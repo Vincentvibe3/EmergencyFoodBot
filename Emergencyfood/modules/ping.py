@@ -1,7 +1,16 @@
-
+import random
 import asyncio
 from psycopg2 import sql
 from Emergencyfood import db, bot as mainBot
+
+messages = ["""Greetings {mention},
+We were informed of your activities. 
+Please do not indulge in gaming. 
+Look outside, your future will be brighter. :sunny: 
+A message from the government of {guildName}""", """Hello, {mention}
+https://youtu.be/zHL9GP_B30E
+Goodbye.
+-Michael Stevens""", """Hello {mention}. Stop playing games or your summer will be lost. This message was generated automatically."""]
 
 pingAgain = True
 
@@ -23,11 +32,8 @@ async def pingOsu(cur, bot):
             activityNames.append(activity.name)
         if 'osu!' in activityNames:
             if pingAgain:
-                await sendChannel.send("""Greetings {mention},
-We were informed of your activities. 
-Please do not indulge in gaming. 
-Look outside, your future will be brighter. :sunny: 
-A message from the government of {guildName}""".format(mention=member.mention, guildName=sendChannel.guild.name))
+                messageChoice = random.choice(message)
+                await sendChannel.send(messageChoice.format(mention=member.mention, guildName=sendChannel.guild.name))
             pingAgain = False
         else:
             pingAgain = True
