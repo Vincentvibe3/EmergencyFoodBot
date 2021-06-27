@@ -32,7 +32,7 @@ async def pingOsu(cur, bot):
             activityNames.append(activity.name)
         if 'osu!' in activityNames:
             if pingAgain:
-                messageChoice = random.choice(message)
+                messageChoice = random.choice(messages)
                 await sendChannel.send(messageChoice.format(mention=member.mention, guildName=sendChannel.guild.name))
             pingAgain = False
         else:
