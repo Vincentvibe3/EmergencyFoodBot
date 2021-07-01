@@ -367,7 +367,7 @@ if  __package__ == 'Emergencyfood':
                 for role in ctx.guild.roles:
                     print(role.name)
                     if role.name in role_names:
-                        perms = discord.Permissions(manage_roles=True, manage_messages=True, view_audit_log=True)
+                        perms = discord.Permissions(manage_roles=True, manage_messages=True, view_audit_log=True, manage_emojis=True)
                         try:
                             await role.edit(permissions=perms, reason="Hello World")
                         except Exception:

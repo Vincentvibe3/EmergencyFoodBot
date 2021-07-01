@@ -10,7 +10,7 @@ Look outside, your future will be brighter. :sunny:
 A message from the government of {guildName}""", """Hello, {mention}
 https://youtu.be/zHL9GP_B30E
 Goodbye.
--Michael Stevens""", """Hello {mention}. Stop playing games or your summer will be lost. This message was generated automatically."""]
+-Michael Stevens""", """Hello {mention}. Stop playing games or your summer will be lost. This message was generated automatically.""", """:sun_with_face:Just don't forget to look outside from time to time {mention}"""]
 
 pingAgain = True
 
