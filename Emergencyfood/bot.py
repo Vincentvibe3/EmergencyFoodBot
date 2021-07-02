@@ -41,6 +41,7 @@ if  __package__ == 'Emergencyfood':
             
             global running_ping_osu
             running_ping_osu = True
+            await ping.clearCount()
             await ping.checkLoop(bot)
 
         #commands
