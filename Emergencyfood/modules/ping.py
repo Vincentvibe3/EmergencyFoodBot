@@ -51,6 +51,9 @@ async def pingOsu(cur, bot):
             if pingAgain:
                 messageChoice = random.choice(messages)
                 await sendChannel.send(messageChoice.format(mention=member.mention, guildName=sendChannel.guild.name, count=count))
+                safeCount = sql.Literal(count)
+                countQuery = sql.SQL("UPDATE ping SET count = {count}").format(count=safeCount)
+                cur.execute(countQuery)
             pingAgain = False
         else:
             pingAgain = True
