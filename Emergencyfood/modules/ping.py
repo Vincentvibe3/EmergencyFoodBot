@@ -64,6 +64,7 @@ async def pingOsu(cur, bot):
 
 async def checkLoop(bot):
     while mainBot.running_ping_osu:
+        await clearCount()
         await pingOsu(bot)
         await asyncio.sleep(30)
 
