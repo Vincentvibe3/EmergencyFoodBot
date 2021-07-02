@@ -6,12 +6,12 @@ from Emergencyfood import db, bot as mainBot
 
 messages = ["""Greetings {mention},
 We were informed of your activities.
-You have been caught gaming {count} times this month.
+You have been caught gaming {count} time{s} this month.
 Please do not indulge in gaming. 
 Look outside, your future will be brighter. :sunny: 
 A message from the government of {guildName}""", 
-"""Hello, {mention}
-You have been gaming {count} times this month.
+"""Hello {mention},
+You have been gaming {count} time{s} this month.
 https://youtu.be/zHL9GP_B30E
 Goodbye.
 -Michael Stevens""", 
@@ -39,6 +39,10 @@ async def pingOsu(cur, bot):
     channel = bot.get_channel(int(result[1]))
     sendChannel = bot.get_channel(int(result[2]))
     count = result[3]+1
+    if count != 1:
+        addS = 's'
+    else:
+        addS = ''
     partmessage = channel.get_partial_message(message_id=result[0])
     message = await partmessage.fetch()
     ctx = await bot.get_context(message=message)
@@ -50,7 +54,7 @@ async def pingOsu(cur, bot):
         if 'osu!' in activityNames:
             if pingAgain:
                 messageChoice = random.choice(messages)
-                await sendChannel.send(messageChoice.format(mention=member.mention, guildName=sendChannel.guild.name, count=count))
+                await sendChannel.send(messageChoice.format(mention=member.mention, guildName=sendChannel.guild.name, count=count, s=addS))
                 safeCount = sql.Literal(count)
                 countQuery = sql.SQL("UPDATE ping SET count = {count}").format(count=safeCount)
                 cur.execute(countQuery)
